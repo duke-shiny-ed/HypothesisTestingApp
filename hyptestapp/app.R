@@ -9,20 +9,37 @@
 
 library(shiny)
 library(shinythemes)
+library(shinyjs)
+library(tidyverse)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
    
   theme = shinytheme("united"),
   
+  useShinyjs(),
   withMathJax(),
+  
+  
+  # ['\\(','\\)']
+  tags$script("
+MathJax.Hub.Config({
+              tex2jax: {
+              inlineMath: [['$','$']],
+              processEscapes: true
+              }
+              });"
+              ),
   
   
   h1("Duke Statistics: Hypothesis Testing", align = "center"),
   
+  tags$style(".fullwidth { width: 100% !important; }"),
+  
+  div(id = "sblay",
   sidebarLayout(
     
-    sidebarPanel(width = 3,
+    div(id = "Sidebar", sidebarPanel(width = 3,
                  radioButtons("typetest", "Choose a type of alternative hypothesis:",
                               choices = c("$$\\huge{<}$$", "$$\\huge{>}$$", "$$\\huge{\\neq}$$")),
                  
@@ -36,11 +53,12 @@ ui <- fluidPage(
                  h5("Current Description of Scenario:"),
                  textOutput("reactext")
                  
-                 ), # Close sidebarPanel
+                 ) # Close sidebarPanel
+    ), # close div for sidebarPanel
     
     mainPanel(width = 9,
   
-  navbarPage("",
+  navbarPage("", id = "tabs",
              
              # Overview, explanation of data/app
              
@@ -76,7 +94,7 @@ ui <- fluidPage(
                       
                       h4("When performing a hypothesis test, we must start with our claims or hypotheses. The two hypotheses must be mutually exclusive (i.e., they cannot both be true) and together they must cover the entire range of possibilities. We can have a one-sided test, in which case we are testing to see if a value is strictly greater than expected or strictly less than expected, or a two-sided test, in which case we are testing to see if a value is simply different from what is expected (could be greater or less than)."),
                       br(),
-                      h4('Null hypothesis - The null hypothesis is generally referred to as the "status quo". It is the claim that is currently generally accepted and believed, or it is the claim of no change -- nothing is going on, there are no effects, nothing is out of the ordinary or different from what we expect. The null hypothesis, often denoted H0, usually includes an = sign -- in a two-sided test, H0 states that the value of interest is equal to something (i.e. H0: mean = 5), and in a one-sided test, H0 states that the value of interest is less than/equal to or greater than/equal to something (i.e. H0: mean <= 5 or H0: mean >= 5).'),
+                      h4('Null hypothesis - The null hypothesis is generally referred to as the "status quo". It is the claim that is currently generally accepted and believed, or it is the claim of no change -- nothing is going on, there are no effects, nothing is out of the ordinary or different from what we expect. The null hypothesis, often denoted $\\huge{H_0}$, usually includes an = sign -- in a two-sided test, $\\huge{H_0}$ states that the value of interest is equal to something (i.e. $\\huge{H_0: \\mu = 5}$ ), and in a one-sided test, $\\huge{H_0}$ states that the value of interest is less than/equal to or greater than/equal to something (i.e. $\\huge{H_0: \\mu \\leq 5}$ or $\\huge{H_0: \\mu \\geq 5}$ ).'),
                       br(),
                       h4("Alternative hypothesis - The alternative hypothesis is the new claim we are testing. It states that there is some new effect, some change that has occurred in the experiment. There is something out of the ordinary that we wouldn't usually expect if the same-old status quo was being upheld. The alternative hypothesis, often denoted HA or H1, generally does not include an equals sign -- in a two-sided test, HA will state that the value of interest is different from something (i.e. HA: mean != 5), and in a one-sided test, HA will state that the value of interest is less than or greater than something (i.e. HA: mean < 5 or HA: mean > 5)."),
                       br(),
@@ -199,14 +217,146 @@ ui <- fluidPage(
                  ) # close mainPanel
                       
              ) # close sideBarLayout
+        ) # close div for sideBarLayout
      ) # close UI
 
 
-# Define server logic required to draw a histogram
+
 server <- function(input, output) {
+  
+  # Hige sidebar on Overview and Review Quiz tabs
+   observeEvent(input$tabs, {
+     if(input$tabs == "Overview" || input$tabs == "Review Quiz"){
+         shinyjs::hide(id = "Sidebar")
+
+         } else{
+           shinyjs::show(id = "Sidebar")
+         }
+   })
+  
+  # Ensure that mainPanel expands to full screen when sidebar is hidden in Overview/Review Quiz tabs
+  observe({
+    if (input$tabs %in% c("Type I and Type II Errors", "Test Statistic and P-Value", "Null and Alternative Hypotheses")) {
+      shinyjs::show(select = "#sblay > div > div:nth-child(1)")
+      shinyjs::removeClass(class = "fullwidth",
+                           select = "#sblay > div > div:nth-child(2)")
+    } else {
+      shinyjs::hide(select = "#sblay > div > div:nth-child(1)")
+      shinyjs::addClass(class = "fullwidth",
+                        select = "#sblay > div > div:nth-child(2)")
+    }
+    
+  })
+  
+  theme_bluewhite <- function (base_size = 11, base_family = "") {
+    theme_bw() %+replace% 
+      theme(
+        panel.grid.major  = element_line(color = "white"),
+        panel.background = element_rect(fill = "lightcyan2"),
+        panel.border = element_rect(color = "lightblue", fill = NA),
+        axis.line = element_line(color = "lightblue"),
+        axis.ticks = element_line(color = "lightblue"),
+        axis.text = element_text(color = "steelblue")
+      )
+  }
+  
+  nullvals <- rnorm(1000, 5, 1)
+  nulldens <- dnorm(nullvals, 5, 1)
+  nulldist <- data.frame(vals = nullvals, dens = nulldens)
+  
+  altlessvals <- rnorm(1000, 3, 1)
+  altlessdens <- dnorm(altlessvals, 3, 1)
+  altlessdist <- data.frame(vals = altlessvals, dens = altlessdens)
+  
+  altmorevals <- rnorm(1000, 7, 1)
+  altmoredens <- dnorm(altmorevals, 7, 1)
+  altmoredist <- data.frame(vals = altmorevals, dens = altmoredens)
+  
+  
+  
+  nulldist <- eventReactive(input$update, {
+    nullvals <- rnorm(1000, as.numeric(input$hypval), 1)
+    nulldens <- dnorm(nullvals, as.numeric(input$hypval), 1)
+    data.frame(vals = nullvals, dens = nulldens)
+  })
+  
+  altlessdist <- eventReactive(input$update, {
+    
+      altlessvals <- rnorm(1000, (as.numeric(input$hypval) - 3), 1)
+      altlessdens <- dnorm(altlessvals, (as.numeric(input$hypval) - 3), 1)
+      altlessdist <- data.frame(vals = altlessvals, dens = altlessdens)
+    
+  })
+  
+  altmoredist <- eventReactive(input$update, {
+    
+      altmorevals <- rnorm(1000, (as.numeric(input$hypval) + 3), 1)
+      altmoredens <- dnorm(altmorevals, (as.numeric(input$hypval) + 3), 1)
+      altmoredist <- data.frame(vals = altmorevals, dens = altmoredens)
+    
+  })
+  
+  plotdata <- reactive({
+    data.frame(nullvals = nulldist()$vals, nulldens = nulldist()$dens, altlessvals = altlessdist()$vals, altlessdens = altlessdist()$dens, altmorevals = altmoredist()$vals, altmoredens = altmoredist()$dens)
+  })
+
+  output$nullaltplot <- renderPlot({
+    
+    if(input$update[1] == 0){
+      
+      nullvals <- rnorm(1000, 5, 1)
+      nulldens <- dnorm(nullvals, 5, 1)
+      nulldist <- data.frame(vals = nullvals, dens = nulldens)
+      
+      altlessvals <- rnorm(1000, 3, 1)
+      altlessdens <- dnorm(altlessvals, 3, 1)
+      altlessdist <- data.frame(vals = altlessvals, dens = altlessdens)
+      
+      plotdata1 <- data.frame(nullvals = nulldist$vals, nulldens = nulldist$dens, altlessvals = altlessdist$vals, altlessdens = altlessdist$dens)
+      
+      ggplot(data = plotdata1, aes(x = nullvals, y = nulldens)) +
+        geom_line(col = "blue", size = 1.5) +
+        geom_line(data = plotdata1, aes(x = altlessvals, y = altlessdens), col = "red", linetype = "dashed") +
+        labs(title = "Plotting The Null and Alternative Distributions", x = "", y = "") +
+        scale_x_discrete(limits = c(5)) +
+        theme_bluewhite() +
+        theme(axis.text.y = element_blank())
    
+       } else if(isolate({input$typetest == "$$\\huge{<}$$"})){
 
+       ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
+         geom_line(col = "blue", size = 1.5) +
+         geom_line(data = plotdata(), aes(x = altlessvals, y = altlessdens), col = "red", linetype = "dashed") +
+          labs(title = "Plotting The Null and Alternative Distributions", x = "", y = "") +
+          scale_x_discrete(limits = c(isolate({as.numeric(input$hypval)}))) +
+          theme_bluewhite() +
+          theme(axis.text.y = element_blank())
 
+      } else if(isolate({input$typetest == "$$\\huge{>}$$"})){
+
+        ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
+          geom_line(col = "blue", size = 1.5) +
+          geom_line(data = plotdata(), aes(x = altmorevals, y = altmoredens), col = "red", linetype = "dashed") +
+          labs(title = "Plotting The Null and Alternative Distributions", x = "", y = "") +
+          scale_x_discrete(limits = c(isolate({as.numeric(input$hypval)}))) +
+          theme_bluewhite() +
+          theme(axis.text.y = element_blank())
+
+      } else{
+
+        ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
+          geom_line(col = "blue", size = 1.5) +
+          geom_line(data = plotdata(), aes(x = altlessvals, y = altlessdens), col = "red", linetype = "dashed") +
+          geom_line(data = plotdata(), aes(x = altmorevals, y = altmoredens), col = "red", linetype ="dashed") +
+          labs(title = "Plotting The Null and Alternative Distributions", x = "", y = "") +
+          scale_x_discrete(limits = c(isolate({as.numeric(input$hypval)}))) +
+          theme_bluewhite() +
+          theme(axis.text.y = element_blank())
+
+      }
+
+  })
+  
 }
 
 # Run the application 
