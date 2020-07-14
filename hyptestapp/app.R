@@ -11,6 +11,7 @@ library(shiny)
 library(shinythemes)
 library(shinyjs)
 library(tidyverse)
+library(shinyBS)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -40,6 +41,18 @@ MathJax.Hub.Config({
   sidebarLayout(
     
     div(id = "Sidebar", sidebarPanel(width = 3,
+                                
+                 bsPopover(id = "helpt", "Use this sidebar to select parameters for the scenario. Select a type of test/alternative hypothesis (explained more on Null/Alternative Hypotheses tab), hypothesized value (5 by default), and significance level (explained more on Test Statistic/P-Value tab). Press Update Simulation to update the hypothesis test outputs throughout the app, including the text description of the new scenario at the bottom of the sidebar.", trigger = "hover"),
+                 textOutput("helpt"),
+                 
+                 tags$head(tags$style("#helpt{color: cornflowerblue;
+                                 font-size: 15px;
+                                 text-align: center;
+                                      font-style: italic;
+                                      }"
+                         )
+                 ),
+              
                  radioButtons("typetest", "Choose a type of alternative hypothesis:",
                               choices = c("$$\\huge{<}$$", "$$\\huge{>}$$", "$$\\huge{\\neq}$$")),
                  
@@ -223,6 +236,8 @@ MathJax.Hub.Config({
 
 
 server <- function(input, output) {
+  
+  output$helpt <- renderText({ c("Hover for Instructions!") })
   
   # Hige sidebar on Overview and Review Quiz tabs
    observeEvent(input$tabs, {

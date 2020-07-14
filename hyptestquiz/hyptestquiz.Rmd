@@ -1,0 +1,64 @@
+---
+title: "Tutorial"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+### Quiz
+
+*You can include any number of single or multiple choice questions as a quiz. Use the `question` function to define a question and the `quiz` function for grouping multiple questions together.*
+
+Some questions to verify that you understand the purposes of various base and recommended R packages:
+
+```{r quiz}
+quiz(
+  question("How do we practically interpret a conclusion of reject $H_0$?",
+    answer("We proved that $H_0$ is false.", message = "This is just one test with one set of data -- have we definitively proved anything?"),
+    answer("We proved that $H_A$ is true.", message = "This is just one test with one set of data -- have we definitively proved anything?"),
+    answer("The data provide strong enough evidence to confirm that $H_A$ is true.", message = "This is just one test with one set of data -- are we able to confirm the truth from that?"),
+    answer("The data provide sufficient evidence against $H_0$ to reject it in favor of $H_A$.", correct = TRUE),
+    
+    allow_retry = TRUE
+  ),
+
+
+
+  question("Choose the correct way to interpret a p-value of 0.08.",
+    answer("The probability of failing to reject $H_0$ when it is false is 0.08.", message = "P(fail to reject $H_0$ | $H_0$ false) is actually P(Type II Error)."),
+    answer("The power of the test is 0.08.", message = "The power of a test is P(reject $H_0$ | $H_0$ false) -- is that also p-value?"),
+    answer("Assuming $H_0$ is true, the probability of observing data with a test statistic as or more extreme than the one calculated is 0.08.", correct = TRUE),
+    answer("The probability that $H_0$ is true is 0.08.", message = "The p-value is a way to summarize the data we've seen -- more than one sample dataset would be required to find P($H_0$ true)."),
+    
+    allow_retry = TRUE
+  ),
+  
+  question("The power of a test is",
+           answer("P(reject $H_0$ | $H_0$ true)", message = "P(reject $H_0$ | $H_0$ true) is P(Type I Error)."),
+           answer("P(reject $H_0$ | $H_0$ false)", correct = TRUE),
+           answer("$1-\\beta$", correct = TRUE),
+           answer("None of the above", message = "Review the Type II Error section -- the answer is here (maybe more than once!)."),
+           allow_retry = TRUE
+        ),
+  
+  question("How can we reduce the Type I Error rate?",
+           answer("Reduce the significance level, i.e. choose a lower $\\alpha$", correct = TRUE),
+           answer("Increase the significance level, i.e. choose a higher $\\alpha$", message = "Since $\\alpha$ = P(reject $H_0$ | $H_0$ true), increasing it would result in more Type I errors."),
+           answer("Choose a lower test statistic and higher p-value.", message = "We can't exactly 'choose' the test statistic or p-value; these calculations just result from our observed data."),
+           answer("None of the above", message = "What can P(Type I error) also be called? What should we do with that probability so it occurs less?"), allow_retry = TRUE
+  ),
+  
+  question("How can we reduce the Type II Error rate?",
+           answer("Increase the power of the test.", correct = TRUE),
+           answer("Reduce $\\beta$.", correct = TRUE),
+           answer("Increase the sample size.", correct = TRUE),
+           answer("Reduce the significance level, i.e. choose a lower $\\alpha$.", message = "Reducing significance level would effectively lower the Type I Error rate."),
+           allow_retry = TRUE
+  )
+)
+```
+
