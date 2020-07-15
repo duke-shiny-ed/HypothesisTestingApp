@@ -35,4 +35,9 @@ ggplot(data = plotdata, aes(x = nullvals, y = nulldens)) +
   labs(title = "Plotting The Null and Alternative Distributions", x = "", y = "") +
   scale_x_discrete(limits = c(5)) +
   theme_bluewhite() +
-  theme(axis.text.y = element_blank())
+  theme(axis.text.y = element_blank()) +
+  scale_color_manual(name="Distribution",
+                     breaks = c("Null Distribution", "Alternative Distribution"),
+                     values = c("Null Distribution" = "blue", "Alternative Distribution" = "red")) +
+  scale_linetype_manual(breaks = c("Null Distribution", "Alternative Distribution"),
+                        values = c("Null Distribution" = "solid", "Alternative Distribution" = "dashed"))
