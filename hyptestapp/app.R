@@ -178,7 +178,40 @@ MathJax.Hub.Config({
                                            font-size: 17px
                                            } #tab281{
                                            font-size: 17px
+                                           } #results{
+                                           font-size: 17px;
+                                           text-align: center
+                                           } #sampsize{
+                                           font-size: 15px;
+                                           text-align: center
+                                           } #sampmean{
+                                           font-size: 15px;
+                                           text-align: center
+                                           } #sampsd{
+                                           font-size: 15px;
+                                           text-align: center
+                                           } #teststat{
+                                           font-size: 15px;
+                                           text-align: center
+                                           } #pvalue{
+                                           font-size: 15px;
+                                           text-align: center
+                                           } #displayalpha{
+                                           font-size: 15px;
+                                           text-align: center
+                                           } #displaycrit{
+                                           font-size: 15px;
+                                           text-align: center
+                                           } #conclusion{
+                                           font-size: 17px;
+                                           text-align: center;
+                                           color: darkorange
+                                           } #answer2{
+                                           font-size: 14px;
+                                           text-align: center;
+                                           color: cornflowerblue
                                            }"
+
                          )
                       ),
                       
@@ -250,16 +283,29 @@ MathJax.Hub.Config({
                       
                       textOutput("tab281"),
                       
-                      fluidRow(
-                        column(width = 9,
-                               plotOutput("tstatplot")
-                               ),
-                        column(width = 3,
-                               checkboxInput("showtst", "Show Test Statistic", value = TRUE),
-                               checkboxInput("showpval", "Show p-value", value = TRUE),
-                               checkboxInput("showalpha", "Show alpha", value = TRUE)),
-                               textOutput("conclusion")
-                      ),
+                     fluidRow(
+                       column(width = 9,
+                              plotOutput("tstatplot")
+                              ),
+                       column(width = 3,
+                     
+                               textOutput("results"),
+                               textOutput("sampsize"),
+                               uiOutput("sampmean"),
+                               uiOutput("sampsd"),
+                               textOutput("teststat"),
+                               textOutput("pvalue"),
+                               uiOutput("displayalpha"),
+                               textOutput("displaycrit"),
+                               uiOutput("conclusion"),
+                               br(),
+                               bsPopover(id = "answer2", "Looking at the true mean, is our conclusion what we would expect? If not, take a look at the Type I/Type II Error tab. Note that in a real world scenario, you CANNOT know the true population parameter, so you cannot definitively know if your test has made an error or not -- this knowledge is only possible in this simulation.", trigger = 'hover', placement = 'top'),
+                               
+                               textOutput("answer2")
+
+                       )
+                     ),
+                      
                       
                       textOutput("tab29"),
                       br(),
@@ -372,12 +418,15 @@ server <- function(input, output) {
                           hyp = 5,
                           alpha = 0.01)
   observeEvent(input$update, {
+    param$type <- "dummy"
     param$type <- input$typetest
   })
   observeEvent(input$update, {
+    param$hyp <- -300000
     param$hyp <- as.numeric(input$hypval)
   })
   observeEvent(input$update, {
+    param$alpha <- -300000
     param$alpha <- as.numeric(input$alpha)
   })
   output$reactext <- renderUI({
@@ -477,7 +526,7 @@ server <- function(input, output) {
   output$tab281 <- renderText({ c("Below is a plot of the null distribution with the test statistic, p-value, and significance level displayed. We can make a conclusion based on our simulation, with parameters from the sidebar.")})
   output$tab29 <- renderText({ c("Making Conclusions")})
   output$tab210 <- renderText({ c("To make a conclusion for our hypothesis test, we can either use the p-value and compare it to the significance level, or we can use the test statistic and compare it to the critical value. For any given hypothesis test, both methods will yield the same conclusion. The decision rules are as follows:")})
-  output$concrules <- renderUI(withMathJax(HTML("<ul><li>If the p-value is <b>less than</b> $\\huge{\\alpha}$ or the test statistic is <strong>greater than</strong> the critical value, <strong>reject</strong> $\\huge{H_0}$ in favor of $\\huge{H_A}$.</li><li>If the p-value is <strong>greater than</strong> $\\huge{\\alpha}$ or the test statistic is <strong>less than</strong> the critical value, <strong>fail to reject</strong> $\\huge{H_0}$ in favor of $\\huge{H_A}$.</li></ul>")))
+  output$concrules <- renderUI(withMathJax(HTML("<ul><li>If the p-value is <b>less than</b> $\\huge{\\alpha}$ or the absolute value of the test statistic is <strong>greater than</strong> the critical value, <strong>reject</strong> $\\huge{H_0}$ in favor of $\\huge{H_A}$.</li><li>If the p-value is <strong>greater than</strong> $\\huge{\\alpha}$ or the absolute value of the test statistic is <strong>less than</strong> the critical value, <strong>fail to reject</strong> $\\huge{H_0}$ in favor of $\\huge{H_A}$.</li></ul>")))
   output$tab211 <- renderText({ c("For practical interpretations of these conclusions, see the Null and Alternative Hypotheses tab.")})
   
   
@@ -517,38 +566,40 @@ server <- function(input, output) {
       )
   }
   
-  nullvals <- rnorm(1000, 5, 1)
-  nulldens <- dnorm(nullvals, 5, 1)
+  oursd <- 2
+  
+  nullvals <- rnorm(1000, 5, oursd)
+  nulldens <- dnorm(nullvals, 5, oursd)
   nulldist <- data.frame(vals = nullvals, dens = nulldens)
   
-  altlessvals <- rnorm(1000, 3, 1)
-  altlessdens <- dnorm(altlessvals, 3, 1)
+  altlessvals <- rnorm(1000, 3, oursd)
+  altlessdens <- dnorm(altlessvals, 3, oursd)
   altlessdist <- data.frame(vals = altlessvals, dens = altlessdens)
   
-  altmorevals <- rnorm(1000, 7, 1)
-  altmoredens <- dnorm(altmorevals, 7, 1)
+  altmorevals <- rnorm(1000, 7, oursd)
+  altmoredens <- dnorm(altmorevals, 7, oursd)
   altmoredist <- data.frame(vals = altmorevals, dens = altmoredens)
   
   
   
   nulldist <- eventReactive(input$update, {
-    nullvals <- rnorm(1000, as.numeric(input$hypval), 1)
-    nulldens <- dnorm(nullvals, as.numeric(input$hypval), 1)
+    nullvals <- rnorm(1000, as.numeric(input$hypval), oursd)
+    nulldens <- dnorm(nullvals, as.numeric(input$hypval), oursd)
     data.frame(vals = nullvals, dens = nulldens)
   })
   
   altlessdist <- eventReactive(input$update, {
     
-      altlessvals <- rnorm(1000, (as.numeric(input$hypval) - 3), 1)
-      altlessdens <- dnorm(altlessvals, (as.numeric(input$hypval) - 3), 1)
+      altlessvals <- rnorm(1000, (as.numeric(input$hypval) - 3), oursd)
+      altlessdens <- dnorm(altlessvals, (as.numeric(input$hypval) - 3), oursd)
       altlessdist <- data.frame(vals = altlessvals, dens = altlessdens)
     
   })
   
   altmoredist <- eventReactive(input$update, {
     
-      altmorevals <- rnorm(1000, (as.numeric(input$hypval) + 3), 1)
-      altmoredens <- dnorm(altmorevals, (as.numeric(input$hypval) + 3), 1)
+      altmorevals <- rnorm(1000, (as.numeric(input$hypval) + 3), oursd)
+      altmoredens <- dnorm(altmorevals, (as.numeric(input$hypval) + 3), oursd)
       altmoredist <- data.frame(vals = altmorevals, dens = altmoredens)
     
   })
@@ -561,12 +612,12 @@ server <- function(input, output) {
     
     if(input$update[1] == 0){
       
-      nullvals <- rnorm(1000, 5, 1)
-      nulldens <- dnorm(nullvals, 5, 1)
+      nullvals <- rnorm(1000, 5, oursd)
+      nulldens <- dnorm(nullvals, 5, oursd)
       nulldist <- data.frame(vals = nullvals, dens = nulldens)
       
-      altlessvals <- rnorm(1000, 3, 1)
-      altlessdens <- dnorm(altlessvals, 3, 1)
+      altlessvals <- rnorm(1000, 3, oursd)
+      altlessdens <- dnorm(altlessvals, 3, oursd)
       altlessdist <- data.frame(vals = altlessvals, dens = altlessdens)
       
       plotdata1 <- data.frame(nullvals = nulldist$vals, nulldens = nulldist$dens, altlessvals = altlessdist$vals, altlessdens = altlessdist$dens)
@@ -612,6 +663,110 @@ server <- function(input, output) {
       }
 
   })
+  
+  # Test Statistic and P-Value tab
+  results <- reactive({
+    if(param$type == "$$\\huge{<}$$"){
+      
+      realmean <- sample(c(as.numeric(param$hyp), as.numeric(param$hyp) - 3), 1)
+      altlessvals <- rnorm(20, realmean, oursd)
+      sampmean <- mean(altlessvals)
+      sampsd <- sd(altlessvals)
+      
+      tstat <- (sampmean - as.numeric(param$hyp)) / (sampsd / sqrt(20))
+      pval <- pt(tstat, 19)
+      critval <- qt(as.numeric(param$alpha), 19)
+      tpos <- qnorm(pval, as.numeric(param$hyp), oursd)
+      critpos <- qnorm(as.numeric(param$alpha), as.numeric(param$hyp), oursd)
+      
+      data.frame(sampmean = sampmean, sampsd = sampsd, tstat = tstat,
+                 pval = pval, critval = critval, tpos = tpos, critpos = critpos,
+                 alpha = param$alpha, hyp = param$hyp, realmean = realmean)
+      
+    } else if(param$type == "$$\\huge{>}$$"){
+      
+      realmean <- sample(c(as.numeric(param$hyp), as.numeric(param$hyp) + 3), 1)
+      altmorevals <- rnorm(20, realmean, oursd)
+      sampmean <- mean(altmorevals)
+      sampsd <- sd(altmorevals)
+      
+      tstat <- (sampmean - as.numeric(param$hyp)) / (sampsd / sqrt(20))
+      pval <- pt(tstat, 19, lower.tail = FALSE)
+      critval <- qt(as.numeric(param$alpha), 19, lower.tail = FALSE)
+      tpos <- qnorm(pval, as.numeric(param$hyp), oursd, lower.tail = FALSE)
+      critpos <- qnorm(as.numeric(param$alpha), as.numeric(param$hyp), oursd, lower.tail = FALSE)
+      
+      data.frame(sampmean = sampmean, sampsd = sampsd, tstat = tstat,
+                 pval = pval, critval = critval, tpos = tpos, critpos = critpos,
+                 alpha = param$alpha, hyp = param$hyp, realmean = realmean)
+      
+    } else{
+      
+      realmean <- sample(c(as.numeric(param$hyp), as.numeric(param$hyp) - 3, as.numeric(param$hyp) + 3), 1)
+      altvals <- rnorm(20, realmean, oursd)
+      sampmean <- mean(altvals)
+      sampsd <- sd(altvals)
+      
+      tstat <- (sampmean - as.numeric(param$hyp)) / (sampsd / sqrt(20))
+      if(tstat < 0){
+        pval <- pt(tstat, 19)
+      } else{
+        pval <- pt(tstat, 19, lower.tail = FALSE)
+      }
+      critval1 <- qt(as.numeric(param$alpha)/2, 19)
+      critval2 <- qt(as.numeric(param$alpha)/2, 19, lower.tail = FALSE)
+      if(tstat < 0){
+        tpos <- qnorm(pval, as.numeric(param$hyp), oursd)
+      } else{
+        tpos <- qnorm(pval, as.numeric(param$hyp), oursd, lower.tail = FALSE)
+      }
+      critpos1 <- qnorm(as.numeric(param$alpha)/2, as.numeric(param$hyp), oursd)
+      critpos2 <- qnorm(as.numeric(param$alpha)/2, as.numeric(param$hyp), oursd, lower.tail = FALSE)
+      
+      data.frame(sampmean = sampmean, sampsd = sampsd, tstat = tstat,
+                 pval = pval, critval1 = critval1, critval2 = critval2, 
+                 tpos = tpos, critpos1 = critpos1, critpos2 = critpos2,
+                 alpha = param$alpha, hyp = param$hyp, realmean = realmean)
+      
+    }
+    
+  })
+    output$results <- renderText({ c("Results")})
+    output$sampsize <- renderText({ c("Sample Size: 20 patients")})
+    output$sampmean <- renderUI(withMathJax( paste("Sample Mean: $\\huge{\\bar{x} = ", round(results()$sampmean, 4), "}$")))
+    output$sampsd <- renderUI(withMathJax( paste("Sample SD: $\\huge{s = ", round(results()$sampsd, 4), "}$")))
+    output$teststat <- renderText({ paste("Test Statistic: $\\huge{", round(results()$tstat, 4), "}$")})
+    output$pvalue <- renderText({ 
+      if(results()$pval < 0.0001){
+        paste("P-Value: Less than $\\huge{0.0001}$")
+      } else{
+        paste("P-Value: $\\huge{", round(results()$pval, 4), "}$")
+      }
+        })
+    output$displayalpha <- renderUI(withMathJax( paste("$\\huge{\\alpha = ", results()$alpha, "}$")))
+    output$displaycrit <- renderText({
+      if(param$type == "$$\\huge{\\neq}$$"){
+        if(results()$tstat < 0){
+          paste("Critical Value: $\\huge{", round(results()$critval1, 4), "}$")
+        } else{
+          paste("Critical Value: $\\huge{", round(results()$critval2, 4), "}$")
+        }
+      } else{
+        paste("Critical Value: $\\huge{", round(results()$critval, 4), "}$")
+      }
+    })
+    
+    output$conclusion <- renderUI({
+      if(as.numeric(results()$pval) < as.numeric(results()$alpha)){
+        withMathJax( c("Conclusion: Reject $\\huge{H_0}$"))
+      } else{
+        withMathJax( c("Conclusion: Fail to reject $\\huge{H_0}$"))
+      }
+    })
+    
+    output$answer2 <- renderText({ paste("(True mean: $\\huge{\\mu = ", results()$realmean, "}$)")})
+
+    
   
 }
 

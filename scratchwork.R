@@ -41,3 +41,26 @@ ggplot(data = plotdata, aes(x = nullvals, y = nulldens)) +
                      values = c("Null Distribution" = "blue", "Alternative Distribution" = "red")) +
   scale_linetype_manual(breaks = c("Null Distribution", "Alternative Distribution"),
                         values = c("Null Distribution" = "solid", "Alternative Distribution" = "dashed"))
+
+
+
+altmean <- sample(c(7, 9), 1)
+altvals <- rnorm(20, altmean, 1)
+sampmean <- mean(altvals)
+sampsd <- sd(altvals)
+
+tstat <- (sampmean - 8) / (sampsd / sqrt(20))
+if(tstat < 0){
+pval <- pt(tstat, 19)
+} else{
+  pval <- pt(tstat, 19, lower.tail = FALSE)
+}
+critval1 <- qt(0.05/2, 19)
+critval2 <- qt(0.05/2, 19, lower.tail = FALSE)
+if(tstat < 0){
+  tpos <- qnorm(pval, 8, 1)
+} else{
+tpos <- qnorm(pval, 8, 1, lower.tail = FALSE)
+}
+critpos1 <- qnorm(0.05/2, 8, 1)
+critpos2 <- qnorm(0.05/2, 8, 1, lower.tail = FALSE)
