@@ -97,6 +97,7 @@ MathJax.Hub.Config({
                       h4("Welcome to Duke University's hypothesis testing app! Here, you can learn about the crucial aspects of conducting and interpreting a hypothesis test, including setting your hypotheses, calculating a test statistic and p-value, making your conclusions, and navigating types of possible errors in your test.", align = "center"),
                       br(),
                       h4("Often in research and data analysis, we want to investigate certain new claims that challenge what is currently believed, so we take some sample data and see whether or not it supports our new claim. However, as there can be significant variation in sample data, we may not know if the evidence our data provide is because it truly supports our new claim or if it was just the result of random fluctuation in the sample. Hypothesis testing is a reliable way to take sample data and test how strongly its evidence supports our new claim -- if the evidence is strong, we can reject the old beliefs and support the new; if it is weak, we cannot reject the old beliefs. To explore this procedure, take a look at the images below to see a sample pathway through our app, and make sure to check out the running example we'll be using throughout the app and how to change its parameters!", align = "center"),
+                      p(textOutput("tabov1", inline = TRUE), span(textOutput("tabov2", inline = TRUE), style = "color:cornflowerblue; font-size:18px"), textOutput("tabov3", inline = TRUE), align = "center" ),
                       
                       h2("Our Example", align = "center"),
                       h4("There is a commonly used drug to treat flu patients that generally helps them recover within a certain number of days on average. A new drug is being developed by a competing company, and they believe that flu patients who use their new drug will recover in a different number of days on average than they would with the current drug.", align = "center"),
@@ -210,6 +211,18 @@ MathJax.Hub.Config({
                                            font-size: 14px;
                                            text-align: center;
                                            color: cornflowerblue
+                                           } #tab282{
+                                           font-size: 17px
+                                           } #tab283{
+                                           font-size: 17px
+                                           } #tab284{
+                                           font-size: 17px
+                                           } #tab285{
+                                           font-size: 17px
+                                           } #tabov1{
+                                           font-size: 18px
+                                           } #tabov3{
+                                           font-size: 18px
                                            }"
 
                          )
@@ -281,7 +294,8 @@ MathJax.Hub.Config({
                       
                       br(),
                       
-                      textOutput("tab281"),
+                      p(textOutput("tab281", inline = TRUE), span(textOutput("tab2ptstat", inline = TRUE), style = "color:blueviolet; font-size:17px"), textOutput("tab282", inline = TRUE), span(textOutput("tab2pcrit", inline = TRUE), style = "color:palevioletred; font-size:17px"), textOutput("tab283", inline = TRUE), span(textOutput("tab2ppval", inline = TRUE), style = "color:royalblue; font-size:17px"), textOutput("tab284", inline = TRUE), span(textOutput("tab2palpha", inline = TRUE), style = "color: #E38F8F; font-size:17px"), textOutput("tab285", inline = TRUE) ),
+                      br(),
                       
                      fluidRow(
                        column(width = 9,
@@ -321,14 +335,14 @@ MathJax.Hub.Config({
                       
                       # Title/subtitle
                       
-                      h2("Type I Error and Type II Error", align = "center"),
+                      h2("Type I Error and Type II Error - !!!!!!!!!!NOT FINISHED AT ALL, coming soon :)", align = "center"),
                       
                       tabsetPanel(
                         
                         tabPanel("Type I Error",
                                  h3("Type I Error", align = "center"),
                                  br(),
-                                 h4("Type I Error - This is the probability of rejecting the null hypothesis when it is false. This is generally considered the more serious error of the two types. When calculating the probability of this error, we are under the assumption that the null hypothesis is true (if it isn't, a Type I error cannot be made). The researcher generally sets what probability of Type I error they're willing to accept, also known as the alpha value."),
+                                 h4("Type I Error - This is the probability of rejecting the null hypothesis when it is true. This is generally considered the more serious error of the two types. When calculating the probability of this error, we are under the assumption that the null hypothesis is true (if it isn't, a Type I error cannot be made). The researcher generally sets what probability of Type I error they're willing to accept, also known as the alpha value."),
                                  
                                  fluidRow(
                                    column(width = 3,
@@ -386,7 +400,7 @@ MathJax.Hub.Config({
                       
                       # Title/subtitle
                       
-                      h2("Wrapping Up with a Review Quiz", align = "center"),
+                      h2("Wrapping Up with a Review Quiz - !!!!!!!!!!NOT FINISHED AT ALL, coming soon :)", align = "center"),
                       
                       sidebarLayout(
                         sidebarPanel(width = 5,
@@ -410,6 +424,11 @@ MathJax.Hub.Config({
 
 
 server <- function(input, output) {
+  
+  # Overview Tab Text
+  output$tabov1 <- renderText({ c("In the rest of the tabs, be sure to hover your mouse over anything highlighted in ") })
+  output$tabov2 <- renderText({ c("cornflower blue")})
+  output$tabov3 <- renderText({ c(" for more information!")})
   
   # Sidebar Text
   output$helpt <- renderText({ c("Hover for Instructions!") })
@@ -523,7 +542,17 @@ server <- function(input, output) {
   output$tab27 <- renderUI( withMathJax( c(", is chosen by the researcher before performing the test. It gives the expected proportion of tests that will result in a false positive, or rejecting the null hypothesis when it is true. From $\\huge{\\alpha}$, we can find the ")))
   output$tab2c <- renderText({ c("critical value")})
   output$tab28 <- renderText({ c(" from the t-distribution, which is analogous to the test statistic -- it is the point where the probability of seeing a value as or more extreme is equal to the significance level.")})
-  output$tab281 <- renderText({ c("Below is a plot of the null distribution with the test statistic, p-value, and significance level displayed. We can make a conclusion based on our simulation, with parameters from the sidebar.")})
+  
+  
+  output$tab281 <- renderText({ c("Below is a plot of the null distribution with the ")})
+  output$tab2ptstat <- renderText({ c("test statistic")})
+  output$tab282 <- renderText({ c(" and ")})
+  output$tab2pcrit <- renderText({ c("critical value(s)")})
+  output$tab283 <- renderText({ c(" positions denoted by lines, and the ")})
+  output$tab2ppval <- renderText({ c("p-value")})
+  output$tab284 <- renderText({ c(" and ")})
+  output$tab2palpha <- renderText({ c("alpha ($\\huge{\\alpha}$)")})
+  output$tab285 <- renderText({ c(" shaded in. We can make a conclusion based on our simulation, with parameters from the sidebar.")})
   output$tab29 <- renderText({ c("Making Conclusions")})
   output$tab210 <- renderText({ c("To make a conclusion for our hypothesis test, we can either use the p-value and compare it to the significance level, or we can use the test statistic and compare it to the critical value. For any given hypothesis test, both methods will yield the same conclusion. The decision rules are as follows:")})
   output$concrules <- renderUI(withMathJax(HTML("<ul><li>If the p-value is <b>less than</b> $\\huge{\\alpha}$ or the absolute value of the test statistic is <strong>greater than</strong> the critical value, <strong>reject</strong> $\\huge{H_0}$ in favor of $\\huge{H_A}$.</li><li>If the p-value is <strong>greater than</strong> $\\huge{\\alpha}$ or the absolute value of the test statistic is <strong>less than</strong> the critical value, <strong>fail to reject</strong> $\\huge{H_0}$ in favor of $\\huge{H_A}$.</li></ul>")))
@@ -562,7 +591,8 @@ server <- function(input, output) {
         panel.border = element_rect(color = "lightblue", fill = NA),
         axis.line = element_line(color = "lightblue"),
         axis.ticks = element_line(color = "lightblue"),
-        axis.text = element_text(color = "steelblue", size = 20)
+        axis.text = element_text(color = "steelblue", size = 20),
+        plot.title = element_text(size=17)
       )
   }
   
@@ -570,7 +600,7 @@ server <- function(input, output) {
   
   nullvals <- rnorm(1000, 5, oursd)
   nulldens <- dnorm(nullvals, 5, oursd)
-  nulldist <- data.frame(vals = nullvals, dens = nulldens)
+  nulldistlite <- data.frame(vals = nullvals, dens = nulldens)
   
   altlessvals <- rnorm(1000, 3, oursd)
   altlessdens <- dnorm(altlessvals, 3, oursd)
@@ -743,15 +773,24 @@ server <- function(input, output) {
         paste("P-Value: $\\huge{", round(results()$pval, 4), "}$")
       }
         })
-    output$displayalpha <- renderUI(withMathJax( paste("$\\huge{\\alpha = ", results()$alpha, "}$")))
+    output$displayalpha <- renderUI({
+      if(param$type == "$$\\huge{\\neq}$$"){
+        
+        withMathJax( paste("$\\huge{\\alpha = ", results()$alpha, "}$ ($\\huge{", results()$alpha /2, "}$ per side)"))
+        
+      } else{
+      
+      withMathJax( paste("$\\huge{\\alpha = ", results()$alpha, "}$"))
+      
+      }
+      
+      })
     output$displaycrit <- renderText({
       if(param$type == "$$\\huge{\\neq}$$"){
-        if(results()$tstat < 0){
-          paste("Critical Value: $\\huge{", round(results()$critval1, 4), "}$")
+       
+          paste("Critical Values: $\\huge{", round(results()$critval1, 4), "}$ and $\\huge{", round(results()$critval2, 4), "}$")
+        
         } else{
-          paste("Critical Value: $\\huge{", round(results()$critval2, 4), "}$")
-        }
-      } else{
         paste("Critical Value: $\\huge{", round(results()$critval, 4), "}$")
       }
     })
@@ -766,7 +805,98 @@ server <- function(input, output) {
     
     output$answer2 <- renderText({ paste("(True mean: $\\huge{\\mu = ", results()$realmean, "}$)")})
 
-    
+    output$tstatplot <- renderPlot({
+      
+      if(input$update[1] == 0){
+        print("here")
+        ggplot(data = nulldistlite, aes(x = vals, y = dens)) +
+          geom_line(col = "blue", size = 1.5) +
+          labs(title = "Plotting the Test Statistic, P-Value, Critical Value, and Alpha", x = "", y = "") +
+          scale_x_discrete(limits = c(5)) +
+          theme_bluewhite() +
+          theme(axis.text.y = element_blank()) +
+          geom_vline(xintercept = results()$tpos, color = "blueviolet", size = 1.5) +
+          geom_vline(xintercept = results()$critpos, color = "palevioletred", size = 1.5) +
+          geom_area(data = subset(nulldistlite, vals < results()$tpos), colour = "blue", fill = "blue",  alpha = 0.4)+
+          geom_area(data = subset(nulldistlite, vals < results()$critpos), colour = "red", fill = "red", alpha = 0.4)+
+          geom_text(aes(x=results()$tpos, label="test statistic", y=0.17), colour="blueviolet", angle=90, vjust = 1, size = 7)+
+          geom_text(aes(x=results()$critpos, label="critical value", y=0.1, size = 20), colour="palevioletred", angle=90, vjust = -1, size = 7)
+        
+        
+      } else if(isolate({input$typetest == "$$\\huge{<}$$"})){
+        
+        ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
+          geom_line(col = "blue", size = 1.5) +
+          labs(title = "Plotting the Test Statistic, P-Value, Critical Value, and Alpha", x = "", y = "") +
+          scale_x_discrete(limits = c(isolate({as.numeric(input$hypval)}))) +
+          theme_bluewhite() +
+          theme(axis.text.y = element_blank()) +
+          geom_vline(xintercept = results()$tpos, color = "blueviolet", size = 1.5) +
+          geom_vline(xintercept = results()$critpos, color = "palevioletred", size = 1.5) +
+          geom_area(data = subset(plotdata(), nullvals < results()$tpos), colour = "blue", fill = "blue",  alpha = 0.4)+
+          geom_area(data = subset(plotdata(), nullvals < results()$critpos), colour = "red", fill = "red", alpha = 0.4)+
+          geom_text(aes(x=results()$tpos, label="test statistic", y=0.17), colour="blueviolet", angle=90, vjust = 1, size = 7)+
+          geom_text(aes(x=results()$critpos, label="critical value", y=0.1, size = 20), colour="palevioletred", angle=90, vjust = -1, size = 7)
+        
+      } else if(isolate({input$typetest == "$$\\huge{>}$$"})){
+        
+        ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
+          geom_line(col = "blue", size = 1.5) +
+          labs(title = "Plotting the Test Statistic, P-Value, Critical Value, and Alpha", x = "", y = "") +
+          scale_x_discrete(limits = c(isolate({as.numeric(input$hypval)}))) +
+          theme_bluewhite() +
+          theme(axis.text.y = element_blank()) +
+          geom_vline(xintercept = results()$tpos, color = "blueviolet", size = 1.5) +
+          geom_vline(xintercept = results()$critpos, color = "palevioletred", size = 1.5) +
+          geom_area(data = subset(plotdata(), nullvals > results()$tpos), colour = "blue", fill = "blue",  alpha = 0.4)+
+          geom_area(data = subset(plotdata(), nullvals > results()$critpos), colour = "red", fill = "red", alpha = 0.4)+
+          geom_text(aes(x=results()$tpos, label="test statistic", y=0.17), colour="blueviolet", angle=90, vjust = -1, size = 7)+
+          geom_text(aes(x=results()$critpos, label="critical value", y=0.1, size = 20), colour="palevioletred", angle=90, vjust = 1, size = 7)
+        
+      } else{
+        
+        if(results()$tstat > 0){
+        
+        ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
+          geom_line(col = "blue", size = 1.5) +
+          labs(title = "Plotting the Test Statistic, P-Value, Critical Value, and Alpha", x = "", y = "") +
+          scale_x_discrete(limits = c(isolate({as.numeric(input$hypval)}))) +
+          theme_bluewhite() +
+          theme(axis.text.y = element_blank()) +
+          geom_vline(xintercept = results()$tpos, color = "blueviolet", size = 1.5) +
+          geom_vline(xintercept = results()$critpos1, color = "palevioletred", size = 1.5) +
+          geom_vline(xintercept = results()$critpos2, color = "palevioletred", size = 1.5) +
+          geom_area(data = subset(plotdata(), nullvals > results()$tpos), colour = "blue", fill = "blue",  alpha = 0.4)+
+          geom_area(data = subset(plotdata(), nullvals < results()$critpos1), colour = "red", fill = "red", alpha = 0.4)+
+          geom_area(data = subset(plotdata(), nullvals > results()$critpos2), colour = "red", fill = "red", alpha = 0.4)+
+          geom_text(aes(x=results()$tpos, label="test statistic", y=0.17), colour="blueviolet", angle=90, vjust = -1, size = 7)+
+          geom_text(aes(x=results()$critpos1, label="critical value", y=0.1, size = 20), colour="palevioletred", angle=90, vjust = -1, size = 7) +
+          geom_text(aes(x=results()$critpos2, label="critical value", y=0.1, size = 20), colour="palevioletred", angle=90, vjust = -1, size = 7)
+        
+        } else {
+          
+          ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
+            geom_line(col = "blue", size = 1.5) +
+            labs(title = "Plotting the Test Statistic, P-Value, Critical Value, and Alpha", x = "", y = "") +
+            scale_x_discrete(limits = c(isolate({as.numeric(input$hypval)}))) +
+            theme_bluewhite() +
+            theme(axis.text.y = element_blank()) +
+            geom_vline(xintercept = results()$tpos, color = "blueviolet", size = 1.5) +
+            geom_vline(xintercept = results()$critpos1, color = "palevioletred", size = 1.5) +
+            geom_vline(xintercept = results()$critpos2, color = "palevioletred", size = 1.5) +
+            geom_area(data = subset(plotdata(), nullvals < results()$tpos), colour = "blue", fill = "blue",  alpha = 0.4)+
+            geom_area(data = subset(plotdata(), nullvals < results()$critpos1), colour = "red", fill = "red", alpha = 0.4)+
+            geom_area(data = subset(plotdata(), nullvals > results()$critpos2), colour = "red", fill = "red", alpha = 0.4)+
+            geom_text(aes(x=results()$tpos, label="test statistic", y=0.17), colour="blueviolet", angle=90, vjust = 1, size = 7)+
+            geom_text(aes(x=results()$critpos1, label="critical value", y=0.1, size = 20), colour="palevioletred", angle=90, vjust = -1, size = 7) + 
+          geom_text(aes(x=results()$critpos2, label="critical value", y=0.1, size = 20), colour="palevioletred", angle=90, vjust = -1, size = 7)
+          
+          
+          
+        }
+          
+      }
+    })
   
 }
 
