@@ -223,6 +223,20 @@ MathJax.Hub.Config({
                                            font-size: 18px
                                            } #tabov3{
                                            font-size: 18px
+                                           } #tab3I1{
+                                           font-size: 17px
+                                           } #tab3I3{
+                                           font-size: 17px
+                                           } #tab3I4{
+                                           font-size: 17px
+                                           } #tab3I5{
+                                           font-size: 17px
+                                           } #tab3I7{
+                                           font-size: 17px
+                                           } #tab3I52{
+                                           font-size: 17px
+                                           } #tab3I54{
+                                           font-size: 17px
                                            }"
 
                          )
@@ -272,7 +286,7 @@ MathJax.Hub.Config({
                       textOutput("tab21"),
                       br(),
                       p(textOutput("tab22", inline = TRUE), span(textOutput("tab2test", inline = TRUE), style = "color:cornflowerblue; font-size:17px"), textOutput("tab23", inline = TRUE) ),
-                      helpText("$\\huge{t^{*} = \\frac{\\bar{x}-\\mu_0}{\\frac{s}{\\sqrt{n}}}}$", align = "center"),
+                      h5("$\\huge{t^{*} = \\frac{\\bar{x}-\\mu_0}{\\frac{s}{\\sqrt{n}}}}$", align = "center"),
                       
                       bsPopover(id = "tab2test", 'The test statistic is essentially a summary of the sample data, telling us how far it falls from the hypothesized distribution. The given formula is for a hypothesis test of a mean when the population standard deviation is unknown, but the general format is always (sample statistic minus hypothesized value) divided by the standard error (or population standard deviation if known).', trigger = "hover", placement = "top"),
                       
@@ -335,29 +349,34 @@ MathJax.Hub.Config({
                       
                       # Title/subtitle
                       
-                      h2("Type I Error and Type II Error - !!!!!!!!!!NOT FINISHED AT ALL, coming soon :)", align = "center"),
+                      h2("Type I Error and Type II Error", align = "center"),
                       
                       tabsetPanel(
                         
                         tabPanel("Type I Error",
                                  h3("Type I Error", align = "center"),
                                  br(),
-                                 h4("Type I Error - This is the probability of rejecting the null hypothesis when it is true. This is generally considered the more serious error of the two types. When calculating the probability of this error, we are under the assumption that the null hypothesis is true (if it isn't, a Type I error cannot be made). The researcher generally sets what probability of Type I error they're willing to accept, also known as the alpha value."),
                                  
-                                 fluidRow(
-                                   column(width = 3,
-                                          h5("Choose an alpha level from the sidebar, and see how the Type I Error area changes.")
-                                          
-                                   ),
-                                   column(width = 9,
-                                          plotOutput("type1plot")
-                                 )
+                                 p(textOutput("tab3I1", inline = TRUE), span(textOutput("tab3I2", inline = TRUE), style = "color:cornflowerblue; font-size:17px"), textOutput("tab3I3", inline = TRUE)),
                                  
-                                 )
+                                 bsPopover(id = "tab3I2", "Type I Error means rejecting the null hypothesis when it is actually true. This is generally regarded as the more serious of the two error types, especially when it could cause potential harm (i.e. the release of an unsafe drug, the use of faulty manufacturing materials, etc.). The researcher generally chooses the chance of a Type I Error that they are willing to accept by choosing a significance level, as shown below.", trigger = 'hover', placement = 'top'),
+                                 br(),
+                                 
+                                 h5("$\\huge{P(}$Type I Error$\\huge{) = P(}$reject $\\huge{H_0 | H_0}$ true$\\huge{) = \\alpha}$", align = "center"),
+                                 br(),
+                                 
+                                 uiOutput("tab3I4"),
+                                 
+                                 br(),
+                                 
+                                 p(textOutput("tab3I5", inline = TRUE), span(textOutput("tab3I51", inline = TRUE), style = "color:blue; font-size:17px"), textOutput("tab3I52", inline = TRUE), span(textOutput("tab3I53", inline = TRUE), style = "color:red; font-size:17px"), uiOutput("tab3I54", inline = TRUE), span(textOutput("tab3I6", inline = TRUE), style = "color: #E38F8F; font-size:17px"), textOutput("tab3I7", inline = TRUE)),
+                                 
+                                 
+                                 plotOutput("type1plot")
                               ),
                         
                         tabPanel("Type II Error",
-                                 h3("Type II Error", align = "center"),
+                                 h3("Type II Error - !!!!!!!!!!NOT FINISHED AT ALL, coming soon :)", align = "center"),
                                  br(),
                                  h4("Type II Error - This is the probability of failing to reject the null hypothesis when it is false. When calculating the probability of this error, we are under the assumption that the alternative hypothesis is true (if it isn't, a Type II error cannot be made). Its probability is assigned the variable beta. This relates to the power of a test:"),
                                  br(),
@@ -376,7 +395,7 @@ MathJax.Hub.Config({
                         ),
                         
                         tabPanel("Reducing Error",
-                                 h3("Reducing Error", align = "center"),
+                                 h3("Reducing Error - !!!!!!!!!!NOT FINISHED AT ALL, coming soon :)", align = "center"),
                                  
                                  fluidRow(
                                    column(width = 3,
@@ -528,7 +547,7 @@ server <- function(input, output) {
   
   
   # Text for Test Statistic/P-Value Tab
-  output$tab21 <- renderText({ c("When performing the hypothesis test, the calculations below are done with the assumption that the null distribution is true.")})
+  output$tab21 <- renderText({ c("When performing the hypothesis test, the calculations below are done with the assumption that the null distribution is the true distribution.")})
   output$tab22 <- renderText({ c("In a hypothesis test for a mean, the formula for the ")})
   output$tab2test <- renderText({ c("test statistic")})
   output$tab23 <- renderText({ c(" takes this general formula:")})
@@ -604,13 +623,13 @@ server <- function(input, output) {
   
   altlessvals <- rnorm(1000, 3, oursd)
   altlessdens <- dnorm(altlessvals, 3, oursd)
-  altlessdist <- data.frame(vals = altlessvals, dens = altlessdens)
+  altlessdistlite <- data.frame(vals = altlessvals, dens = altlessdens)
   
   altmorevals <- rnorm(1000, 7, oursd)
   altmoredens <- dnorm(altmorevals, 7, oursd)
-  altmoredist <- data.frame(vals = altmorevals, dens = altmoredens)
+  altmoredistlite <- data.frame(vals = altmorevals, dens = altmoredens)
   
-  
+  plotdatalite <- data.frame(nullvals = nulldistlite$vals, nulldens = nulldistlite$dens, altlessvals = altlessdistlite$vals, altlessdens = altlessdistlite$dens, altmorevals = altmoredistlite$vals, altmoredens = altmoredistlite$dens)
   
   nulldist <- eventReactive(input$update, {
     nullvals <- rnorm(1000, as.numeric(input$hypval), oursd)
@@ -796,11 +815,24 @@ server <- function(input, output) {
     })
     
     output$conclusion <- renderUI({
+      
+      if(param$type == "$$\\huge{\\neq}$$"){
+        
+        if(as.numeric(results()$pval) < (as.numeric(results()$alpha) / 2)){
+          withMathJax( c("Conclusion: Reject $\\huge{H_0}$"))
+        } else{
+          withMathJax( c("Conclusion: Fail to reject $\\huge{H_0}$"))
+        }
+        
+        
+      } else{
+      
       if(as.numeric(results()$pval) < as.numeric(results()$alpha)){
         withMathJax( c("Conclusion: Reject $\\huge{H_0}$"))
       } else{
         withMathJax( c("Conclusion: Fail to reject $\\huge{H_0}$"))
       }
+   }
     })
     
     output$answer2 <- renderText({ paste("(True mean: $\\huge{\\mu = ", results()$realmean, "}$)")})
@@ -808,7 +840,7 @@ server <- function(input, output) {
     output$tstatplot <- renderPlot({
       
       if(input$update[1] == 0){
-        print("here")
+   
         ggplot(data = nulldistlite, aes(x = vals, y = dens)) +
           geom_line(col = "blue", size = 1.5) +
           labs(title = "Plotting the Test Statistic, P-Value, Critical Value, and Alpha", x = "", y = "") +
@@ -897,7 +929,80 @@ server <- function(input, output) {
           
       }
     })
-  
+    
+    #Type I/Type II Error Tab
+      
+       # Type I Sub-Tab
+    
+      output$tab3I1 <- renderText({ c("When performing a hypothesis test, there is always a possibility for an erroneous result. Although we would like to be fairly confident in our conclusions, there is always chance due to random sampling, and this will occasionally lead us to make incorrect decisions. The first kind of error is called ")})
+      output$tab3I2 <- renderText({ c("Type I Error")})
+      output$tab3I3 <- renderText({ c(".")})
+      output$tab3I4 <- renderUI({ withMathJax(c("Type I Error is always conditional on the null hypothesis being true (if $\\huge{H_0}$ is not true, a Type I Error, by definition, could not be made). When $\\huge{H_0}$ is true, due to random sampling, the probability we will observe data that leads us to reject $\\huge{H_0}$ anyway is equal to $\\huge{\\alpha}$."))})
+      output$tab3I5 <- renderText({ c("For the plot of the ")})
+      output$tab3I51 <- renderText({c("null distribution")})
+      output$tab3I52 <- renderText({ c(" and the ")})
+      output$tab3I53 <- renderText({ c("alternative distribution")})
+      output$tab3I54 <- renderUI({ withMathJax(c(", choose a significance level ($\\huge{\\alpha}$) from the sidebar, and see how the probability of a Type I Error (shaded in "))})
+      output$tab3I6 <- renderText({c("light red")})
+      output$tab3I7 <- renderText({c(") changes.")})
+      
+      output$type1plot <- renderPlot({
+        
+        
+        
+        if(input$update[1] == 0){
+
+          ggplot(data = plotdatalite, aes(x = nullvals, y = nulldens)) +
+            geom_line(col = "blue", size = 1.5) +
+            geom_line(data = plotdatalite, aes(x = altlessvals, y = altlessdens), col = "red", linetype = "dashed") +
+            labs(title = "Plotting the Type I Error", x = "", y = "") +
+            scale_x_discrete(limits = c(5)) +
+            theme_bluewhite() +
+            theme(axis.text.y = element_blank()) +
+            geom_area(data = subset(plotdatalite, nullvals < results()$critpos), colour = "red", fill = "red", alpha = 0.4)
+
+          
+        } else if(isolate({input$typetest == "$$\\huge{<}$$"})){
+          
+          ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
+            geom_line(col = "blue", size = 1.5) +
+            geom_line(data = plotdata(), aes(x = altlessvals, y = altlessdens), col = "red", linetype = "dashed") +
+            labs(title = "Plotting the Type I Error", x = "", y = "") +
+            scale_x_discrete(limits = c(c(isolate({as.numeric(input$hypval)})))) +
+            theme_bluewhite() +
+            theme(axis.text.y = element_blank()) +
+            geom_area(data = subset(plotdata(), nullvals < results()$critpos), colour = "red", fill = "red", alpha = 0.4)
+          
+        } else if(isolate({input$typetest == "$$\\huge{>}$$"})){
+          
+          ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
+            geom_line(col = "blue", size = 1.5) +
+            geom_line(data = plotdata(), aes(x = altmorevals, y = altmoredens), col = "red", linetype = "dashed") +
+            labs(title = "Plotting the Type I Error", x = "", y = "") +
+            scale_x_discrete(limits = c(c(isolate({as.numeric(input$hypval)})))) +
+            theme_bluewhite() +
+            theme(axis.text.y = element_blank()) +
+            geom_area(data = subset(plotdata(), nullvals > results()$critpos), colour = "red", fill = "red", alpha = 0.4)
+          
+        } else{
+          
+          ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
+            geom_line(col = "blue", size = 1.5) +
+            geom_line(data = plotdata(), aes(x = altmorevals, y = altmoredens), col = "red", linetype = "dashed") +
+            geom_line(data = plotdata(), aes(x = altlessvals, y = altlessdens), col = "red", linetype = "dashed") +
+            labs(title = "Plotting the Type I Error", x = "", y = "") +
+            scale_x_discrete(limits = c(c(isolate({as.numeric(input$hypval)})))) +
+            theme_bluewhite() +
+            theme(axis.text.y = element_blank()) +
+            geom_area(data = subset(plotdata(), nullvals < results()$critpos1), colour = "red", fill = "red", alpha = 0.4)+
+            geom_area(data = subset(plotdata(), nullvals > results()$critpos2), colour = "red", fill = "red", alpha = 0.4)
+          
+          
+        }
+        
+        
+      })
+      
 }
 
 # Run the application 
