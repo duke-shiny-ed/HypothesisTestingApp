@@ -105,8 +105,8 @@ MathJax.Hub.Config({
                       br(),
                       h4("Suppose the current drug makes patients recover in about 5 days on average, and the new company says that their drug will help patients recover in less than 5 days on average. We experiment with giving patients the new drug, and our hypotheses are:", align = "center"),
                       br(),
-                      helpText("Null hypothesis: Patient recovery time is greater than or equal to five days.     $${H_0 \\geq 5}$$", align = "center"),
-                      helpText("Alternative hypothesis: Patient recovery time is less than five days.     $${H_A < 5}$$", align = "center"),
+                      div(id = "helptext1", helpText("Null hypothesis: Patient recovery time is greater than or equal to five days:     ${H_0: \\mu \\geq 5}$", align = "center")),
+                      div(id = "helptext2", helpText("Alternative hypothesis: Patient recovery time is less than five days:     ${H_A:  \\mu < 5}$", align = "center")),
                       br(),
                       h4("You can test these hypotheses (and find explanations of the hypotheses themselves) in the following tabs. You can also use the sidebar on the tabs to change the parameters -- you can choose the type of test, the hypothesized value, and the level of significance to see how these affect the test and your conclusions."),
                       br()
@@ -117,7 +117,12 @@ MathJax.Hub.Config({
              
              tabPanel("Null and Alternative Hypotheses",
                       
-                      tags$head(tags$style("#tab11{font-size: 17px;
+                      tags$head(tags$style("#helptext1{
+                                          text-align: center
+                                           } #helptext2{
+                                           text-align: center
+                                           } #tab11{
+                                           font-size: 17px;
                                            } #conditions{
                                            font-size: 15px;
                                            } #tab12{
@@ -241,6 +246,24 @@ MathJax.Hub.Config({
                                            } #tab3I52{
                                            font-size: 17px
                                            } #tab3I54{
+                                           font-size: 17px
+                                           } #tab3II1{
+                                           font-size: 17px
+                                           } #tab3II3{
+                                           font-size: 17px
+                                           } #tab3II4{
+                                           font-size: 17px
+                                           } #tab3II42{
+                                           font-size: 17px
+                                           } #tab3II5{
+                                           font-size: 17px
+                                           } #tab3II52{
+                                           font-size: 17px
+                                           } #tab3II54{
+                                           font-size: 17px
+                                           } #tab3II7{
+                                           font-size: 17px
+                                           } #tab3IIand{
                                            font-size: 17px
                                            }"
 
@@ -393,22 +416,28 @@ MathJax.Hub.Config({
                               ),
                         
                         tabPanel("Type II Error",
-                                 h3("Type II Error - !!!!!!!!!!NOT FINISHED AT ALL, coming soon :)", align = "center"),
+                                 h3("Type II Error", align = "center"),
                                  br(),
-                                 h4("Type II Error - This is the probability of failing to reject the null hypothesis when it is false. When calculating the probability of this error, we are under the assumption that the alternative hypothesis is true (if it isn't, a Type II error cannot be made). Its probability is assigned the variable beta. This relates to the power of a test:"),
-                                 br(),
-                                 h4("Power - The power of a test is 1 - beta, or 1 - P(Type II error) or 1 - P(failing to reject null | null is false). This means that the power of a test can be interpreted as the probability of correctly rejecting the null hypothesis when it is false. Power can be manipulated to reduce/increase the probability of errors."),
                                  
-                                 fluidRow(
-                                   column(width = 3,
-                                          h5("Adjust the slider to fix beta, and choose an alpha level from the sidebar to see how the Type II Error area changes."),
-                                          sliderInput("type2beta", "$${\\beta:}$$", value = 0.5, min = 0, max = 1)
-                                   ),
-                                   column(width = 9,
-                                          plotOutput("type2plot")
-                                   )
-                                   
-                                 )
+                                 p(textOutput("tab3II1", inline = TRUE), span(textOutput("tab3II2", inline = TRUE), style = "color:cornflowerblue; font-size:17px"), textOutput("tab3II3", inline = TRUE)),
+                                 bsPopover(id = "tab3II2", "Type II Error means failing to reject the null hypothesis when it is false, or concluding that there is no difference from the null hypothesis when a difference does indeed exist. As shown below, P(Type II Error) is the complement of the power of the test, i.e. it is equal to 1 minus the power.", trigger = 'hover', placement = 'top'),
+                                 br(),
+                                 
+                                 h5("${P(}$Type II Error${) = P(}$fail to reject ${H_0 | H_0}$ false${) = \\beta = 1 - power}$", align = "center"),
+                                 br(),
+                                 
+                                 p(uiOutput("tab3II4", inline = TRUE), span(textOutput("tab3IIpow", inline = TRUE), style = "color:cornflowerblue; font-size:17px"), textOutput("tab3II42", inline = TRUE)),
+                                 bsPopover(id = "tab3IIpow", "The power of a test is 1 - P(Type II Error), or 1 - P(failing to reject null | null is false). This means that the power of a test can be interpreted as the probability of correctly rejecting the null hypothesis when it is false. Power can be manipulated to reduce/increase the probability of errors.", trigger = 'hover', placement = 'top'),
+                                 
+                                 br(),
+                                 
+                                 p(textOutput("tab3II5", inline = TRUE), span(textOutput("tab3IInull", inline = TRUE), style = "color:blue; font-size:17px"), textOutput("tab3IIand", inline = TRUE), span(textOutput("tab3IIalt", inline = TRUE), style = "color:red; font-size:17px"), textOutput("tab3II52", inline = TRUE), span(uiOutput("tab3II53", inline = TRUE), style = "color: #E38F8F; font-size:17px"), textOutput("tab3II54", inline = TRUE), span(uiOutput("tab3II6", inline = TRUE), style = "color: blue; font-size:17px"), textOutput("tab3II7", inline = TRUE)),
+                                 
+                                 
+                                 plotOutput("type2plot"),
+                                 plotOutput("type2plot2")
+                                 
+                      
                         ),
                         
                         tabPanel("Reducing Error",
@@ -1113,7 +1142,122 @@ server <- function(input, output) {
         
       })
       
-}
+      
+      # Type II Sub-Tab
+
+      output$tab3II1 <- renderText({ c("In addition to Type I Error, there is another kind of error called ")})
+      output$tab3II2 <- renderText({ c("Type II Error")})
+      output$tab3II3 <- renderText({ c(".")})
+      output$tab3II4 <- renderUI({ withMathJax(c("Type II Error is always conditional on the alternative hypothesis being true (if $H_A$ is not true, a Type II Error, by definition, could not be made). When $H_A$ is true, due to random sampling, the probability we will observe data that does not lead us to reject $H_0$ (even though we should) is equal to $\\beta$. As seen in the equation, $\\beta$ is also equal to 1 minus the "))})
+      output$tab3IIpow <- renderText({ c("power")})
+      output$tab3II42 <- renderText({ c(" of the test.")})
+      output$tab3II5 <- renderText({ c("For the plot of the ")})
+      output$tab3IInull <- renderText({ c("null distribution")})
+      output$tab3IIand <- renderText({ c(" and the ")})
+      output$tab3IIalt <- renderText({ c("alternative distribution")})
+      output$tab3II52 <- renderText({ c(" below, observe the shaded-in ")})
+      output$tab3II53 <- renderUI({ withMathJax(c("$P($Type II Error$)$ ($\\beta$)"))})
+      output$tab3II54 <- renderText({ c(" and ")})
+      output$tab3II6 <- renderUI({ withMathJax(c("power ($1-\\beta$)"))})
+      output$tab3II7 <- renderText({ c("appear on the plot.")})
+      
+      output$type2plot <- renderPlot({
+        
+        
+        
+        if(input$update[1] == 0){
+          
+          ggplot(data = plotdatalite, aes(x = altlessvals, y = altlessdens)) +
+            geom_line(col = "red", size = 1.5) +
+            geom_line(data = plotdatalite, aes(x = nullvals, y = nulldens), col = "blue", linetype = "dashed") +
+            labs(title = "Plotting the Type II Error", x = "", y = "") +
+            scale_x_discrete(limits = c(5)) +
+            theme_bluewhite() +
+            theme(axis.text.y = element_blank()) +
+            geom_area(data = subset(plotdatalite, altlessvals > results()$critpos), colour = "red", fill = "red", alpha = 0.4) +
+            geom_area(data = subset(plotdatalite, altlessvals < results()$critpos), colour = "blue", fill = "blue", alpha = 0.4) +
+            geom_vline(xintercept = results()$critpos, color = "palevioletred", size = 1.5) +
+            geom_text(aes(x=results()$critpos, label="rejection threshold", y=0.14, size = 20), colour= "black", angle=90, vjust = -1, size = 7)
+          
+            
+          
+          
+        } else if(isolate({input$typetest == "$${<}$$"})){
+          
+          ggplot(data = plotdata(), aes(x = altlessvals, y = altlessdens)) +
+            geom_line(col = "red", size = 1.5) +
+            geom_line(data = plotdatalite, aes(x = nullvals, y = nulldens), col = "blue", linetype = "dashed") +
+            labs(title = "Plotting the Type II Error", x = "", y = "") +
+            scale_x_discrete(limits = c(isolate({as.numeric(input$hypval)}))) +
+            theme_bluewhite() +
+            theme(axis.text.y = element_blank()) +
+            geom_area(data = subset(plotdata(), altlessvals > results()$critpos), colour = "red", fill = "red", alpha = 0.4) +
+            geom_area(data = subset(plotdata(), altlessvals < results()$critpos), colour = "blue", fill = "blue", alpha = 0.4) +
+            geom_vline(xintercept = results()$critpos, color = "palevioletred", size = 1.5) +
+            geom_text(aes(x=results()$critpos, label="rejection threshold", y=0.14, size = 20), colour="black", angle=90, vjust = -1, size = 7)
+          
+        } else if(isolate({input$typetest == "$${>}$$"})){
+          
+          ggplot(data = plotdata(), aes(x = altmorevals, y = altmoredens)) +
+            geom_line(col = "red", size = 1.5) +
+            geom_line(data = plotdatalite, aes(x = nullvals, y = nulldens), col = "blue", linetype = "dashed") +
+            labs(title = "Plotting the Type II Error", x = "", y = "") +
+            scale_x_discrete(limits = c(isolate({as.numeric(input$hypval)}))) +
+            theme_bluewhite() +
+            theme(axis.text.y = element_blank()) +
+            geom_area(data = subset(plotdata(), altmorevals < results()$critpos), colour = "red", fill = "red", alpha = 0.4) +
+            geom_area(data = subset(plotdata(), altmorevals > results()$critpos), colour = "blue", fill = "blue", alpha = 0.4) +
+            geom_vline(xintercept = results()$critpos, color = "palevioletred", size = 1.5) +
+            geom_text(aes(x=results()$critpos, label="rejection threshold", y=0.14, size = 20), colour="black", angle=90, vjust = -1, size = 7)
+          
+        } else{
+          
+          grob <- grobTree(textGrob("For a two-sided test, there are two \n possibilities for the alternative \n distribution: less than or greater than \n the null distribution. This plot shows \n less than; see the plot below for \n greater than.", x=0.01,  y=0.80, hjust=0,
+                                    gp=gpar(col="darkred", fontsize=11, fontface="italic")))
+          
+          ggplot(data = plotdata(), aes(x = altlessvals, y = altlessdens)) +
+            geom_line(col = "red", size = 1.5) +
+            geom_line(data = plotdatalite, aes(x = nullvals, y = nulldens), col = "blue", linetype = "dashed") +
+            labs(title = "Plotting the Type II Error - Two Sided Less Than", x = "", y = "") +
+            scale_x_discrete(limits = c(isolate({as.numeric(input$hypval)}))) +
+            theme_bluewhite() +
+            theme(axis.text.y = element_blank()) +
+            geom_area(data = subset(plotdata(), altlessvals > results()$critpos1), colour = "red", fill = "red", alpha = 0.4) +
+            geom_area(data = subset(plotdata(), altlessvals < results()$critpos1), colour = "blue", fill = "blue", alpha = 0.4) +
+            geom_vline(xintercept = results()$critpos1, color = "palevioletred", size = 1.5) +
+            geom_text(aes(x=results()$critpos1, label="rejection threshold", y=0.14, size = 20), colour="black", angle=90, vjust = -1, size = 7) +
+            annotation_custom(grob)
+          
+          
+        }
+        
+        
+        
+      })
+      
+      output$type2plot2 <- renderPlot({
+        
+        if("critpos1" %in% names(results())){
+          
+          ggplot(data = plotdata(), aes(x = altmorevals, y = altmoredens)) +
+            geom_line(col = "red", size = 1.5) +
+            geom_line(data = plotdatalite, aes(x = nullvals, y = nulldens), col = "blue", linetype = "dashed") +
+            labs(title = "Plotting the Type II Error - Two Sided Greater Than", x = "", y = "") +
+            scale_x_discrete(limits = c(isolate({as.numeric(input$hypval)}))) +
+            theme_bluewhite() +
+            theme(axis.text.y = element_blank()) +
+            geom_area(data = subset(plotdata(), altmorevals < results()$critpos2), colour = "red", fill = "red", alpha = 0.4) +
+            geom_area(data = subset(plotdata(), altmorevals > results()$critpos2), colour = "blue", fill = "blue", alpha = 0.4) +
+            geom_vline(xintercept = results()$critpos2, color = "palevioletred", size = 1.5) +
+            geom_text(aes(x=results()$critpos2, label="rejection threshold", y=0.14, size = 20), colour="black", angle=90, vjust = -1, size = 7)
+          
+        }
+        
+        
+      })
+      
+      
+      }
 
 # Run the application 
 shinyApp(ui = ui, server = server)
