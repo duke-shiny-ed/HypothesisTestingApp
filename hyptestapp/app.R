@@ -12,6 +12,8 @@ library(shinythemes)
 library(shinyjs)
 library(tidyverse)
 library(shinyBS)
+library(pwr)
+library(grid)
 
 
 # Define UI for application that draws a histogram
@@ -265,7 +267,25 @@ MathJax.Hub.Config({
                                            font-size: 17px
                                            } #tab3IIand{
                                            font-size: 17px
-                                           }"
+                                           } #tab3r{
+                                           font-size: 17px
+                                           } #tab3r2{
+                                           font-size: 17px
+                                           } #tab3r3{
+                                           font-size: 17px
+                                           } #tab3rII{
+                                           font-size: 15px
+                                           } #tab3r4{
+                                           font-size: 17px
+                                           } #redbeta{
+                                           font-size: 24px;
+                                           text-align: center;
+                                           padding: 40px
+                                           } #redpower{
+                                           font-size: 24px;
+                                           text-align: center;
+                                           vertical-align: middle
+                                           } "
 
                          )
                       ),
@@ -441,15 +461,39 @@ MathJax.Hub.Config({
                         ),
                         
                         tabPanel("Reducing Error",
-                                 h3("Reducing Error - !!!!!!!!!!NOT FINISHED AT ALL, coming soon :)", align = "center"),
+                                 h3("Reducing Error", align = "center"),
+                                 
+                                 textOutput("tab3r"),
+                                 br(),
+                                 textOutput("tab3r2"),
+                                 br(),
+                                 textOutput("tab3r3"),
+                                 br(),
+                                 uiOutput("tab3rII"),
+                                 br(),
+                                 textOutput("tab3r4"),
+                                 br(),
                                  
                                  fluidRow(
                                    column(width = 3,
-                                          h5("Adjust the sliders to fix sample size, and choose an alpha level from the sidebar to see how beta, or P(Type II Error), changes."),
-                                          sliderInput("redsampsize", "Sample size:", value = 100, min = 1, max = 10000)
+                                          sliderInput("redsampsize", "Sample size:", value = 20, min = 1, max = 500),
+                                          sliderInput("redmindev", "Difference to detect:", value = 2, min = 0.01, max = 5),
+                                          fluidRow(
+                                            column(width = 6, offset = 3,
+                                          actionButton("update2", "Update!")
+                                            )
+                                          ),
+                                          tags$head(tags$style("#update2{color: white;
+                                      background-color: mediumseagreen;
+                                      text-align: center;
+                                      }"
+                                          )
+                                          ),
+                                          br(),
                                    ),
                                    column(width = 9,
-                                          textOutput("redbeta")
+                                          textOutput("redbeta"),
+                                          textOutput("redpower")
                                    )
                                    
                                  )
@@ -1255,6 +1299,89 @@ server <- function(input, output) {
         
         
       })
+      
+      # Reducing Error sub-tab
+      
+      rederrorvals <- reactiveValues(samp = 20,
+                              dev = 2)
+      
+      observeEvent(input$update2, {
+        rederrorvals$samp <- -1
+        rederrorvals$samp <- input$redsampsize
+      })
+      
+      observeEvent(input$update2, {
+        rederrorvals$dev <- -1
+        rederrorvals$dev <- input$redmindev
+      })
+      
+      output$tab3r <- renderText({ c("When performing a hypothesis test, we generally want to reduce the probability of error as much as possible. There are several ways to reduce error.")})
+      output$tab3r2 <- renderText({ c("For Type I Error, the main way to reduce its probability is to choose a lower $\\alpha$, as this value can generally be fixed by the researcher.")})
+      output$tab3r3 <- renderText({ c("For Type II Error, there are multiple methods to reduce its probability: ")})
+      output$tab3rII <- renderUI(HTML("<ul><li>Increase power - Since power and Type II Error are inversely related, higher power means lower Type II Error.</li><br><li>Increase sample size - Higher sample size makes it easier to detect when the distribution truly differs from the null hypothesis and is not just showing random variability.</li><br><li>Increase difference from the null to be detected - When the alternative distribution is further away (larger difference) from the null, we will be able to reject the null more often.</li><br><li>Increase significance level - Increasing P(Type I Error) results in more correct rejections of the null, but it also yields more incorrect rejections, so this method should be used with caution.</li></ul>"))
+      output$tab3r4 <- renderText({ c("Using your parameters from the sidebar and the sliders below, adjust the values to see how P(Type II Error) changes.")})
+      output$redpower <- renderText({
+        
+        if(isolate({input$typetest == "$${<}$$"})){
+          
+          test <- pwr.t.test(d = -as.numeric(rederrorvals$dev)/2, n = as.numeric(rederrorvals$samp), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "less")
+          
+          power <- round(test$power, 5)
+          
+          paste("Power, or $1 - \\beta$: ", round(power, 5))
+          
+        } else if(isolate({input$typetest == "$${>}$$"})){ 
+        
+          test <- pwr.t.test(d = as.numeric(rederrorvals$dev)/2, n = as.numeric(rederrorvals$samp), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "greater")
+          
+          power <- round(test$power, 5)
+          
+          paste("Power, or $1 - \\beta$: ", round(power, 5))
+        
+        } else{
+          
+          test <- pwr.t.test(d = as.numeric(rederrorvals$dev)/2, n = as.numeric(rederrorvals$samp), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "two.sided")
+          
+          power <- round(test$power, 5)
+          
+          paste("Power, or $1 - \\beta$: ", round(power, 5))
+          
+          
+        }
+        
+      })
+      
+      output$redbeta <- renderText({
+        
+        if(isolate({input$typetest == "$${<}$$"})){
+          
+          test <- pwr.t.test(d = -as.numeric(rederrorvals$dev)/2, n = as.numeric(rederrorvals$samp), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "less")
+          
+          power <- round(test$power, 5)
+          
+          paste("P(Type II Error), or $\\beta$: ", round(1-power, 5))
+          
+        } else if(isolate({input$typetest == "$${>}$$"})){ 
+          
+          test <- pwr.t.test(d = as.numeric(rederrorvals$dev)/2, n = as.numeric(rederrorvals$samp), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "greater")
+          
+          power <- round(test$power, 5)
+          
+          paste("P(Type II Error), or $\\beta$: ", round(1-power, 5))
+          
+        } else{
+          
+          test <- pwr.t.test(d = as.numeric(rederrorvals$dev)/2, n = as.numeric(rederrorvals$samp), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "two.sided")
+          
+          power <- round(test$power, 5)
+          
+          paste("P(Type II Error), or $\\beta$: ", round(1-power, 5))
+          
+          
+        }
+        
+      })
+      
       
       
       }
