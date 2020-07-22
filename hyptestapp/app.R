@@ -516,7 +516,14 @@ MathJax.Hub.Config({
                           h4("Acknowledgements/Further Resources")
                         ),
                         mainPanel(width = 7,
-                                  h3("Let's review!", align = "center")),
+                                  h3("Let's review!", align = "center"),
+                                  
+                                  tags$iframe(src = "https://grace-shiny.shinyapps.io/Quiz_HypothesisTesting/",
+                                              width = "1000", height = "1500",
+                                              frameBorder="0")
+                                  
+                                  ),
+                        
                         position = "right"
                       ) # close Review Quiz sidebarLayout
                       

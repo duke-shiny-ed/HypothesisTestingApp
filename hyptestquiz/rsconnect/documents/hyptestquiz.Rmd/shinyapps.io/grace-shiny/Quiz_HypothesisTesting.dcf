@@ -1,0 +1,12 @@
+name: Quiz_HypothesisTesting
+title: Quiz_HypothesisTesting
+username:
+account: grace-shiny
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2601845
+bundleId: 3422228
+url: https://grace-shiny.shinyapps.io/Quiz_HypothesisTesting/
+when: 1595437549.05509
+asMultiple: FALSE
+asStatic: FALSE
