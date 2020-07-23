@@ -57,7 +57,7 @@ MathJax.Hub.Config({
                  ),
               
                  radioButtons("typetest", "Choose a type of alternative hypothesis:",
-                              choices = c("$${<}$$", "$${>}$$", "$${\\neq}$$")),
+                              choices = c("$${H_A: \\mu < \\mu_0}$$", "$${H_A: \\mu > \\mu_0}$$", "$${H_A: \\mu \\neq \\mu_0}$$")),
                  
                  numericInput("hypval", "Hypothesized Value:", 5),
                  
@@ -285,7 +285,9 @@ MathJax.Hub.Config({
                                            font-size: 24px;
                                            text-align: center;
                                            vertical-align: middle
-                                           } "
+                                           } #resources{
+                                           font-size: 17px
+                                           }"
 
                          )
                       ),
@@ -513,13 +515,14 @@ MathJax.Hub.Config({
                       
                       sidebarLayout(
                         sidebarPanel(width = 5,
-                          h4("Acknowledgements/Further Resources")
+                          h4("Acknowledgements/Further Resources"),
+                          uiOutput("resources")
                         ),
                         mainPanel(width = 7,
                                   h3("Let's review!", align = "center"),
                                   
                                   tags$iframe(src = "https://grace-shiny.shinyapps.io/Quiz_HypothesisTesting/",
-                                              width = "1000", height = "1500",
+                                              width = "666", height = "1000",
                                               frameBorder="0")
                                   
                                   ),
@@ -549,7 +552,7 @@ server <- function(input, output) {
   # Sidebar Text
   output$helpt <- renderText({ c("Hover for Instructions!") })
   
-  param <- reactiveValues(type = "$${<}$$",
+  param <- reactiveValues(type = "$${H_A: \\mu < \\mu_0}$$",
                           hyp = 5,
                           alpha = 0.01)
   observeEvent(input$update, {
@@ -565,11 +568,11 @@ server <- function(input, output) {
     param$alpha <- as.numeric(input$alpha)
   })
   output$reactext <- renderUI({
-    if(param$type == "$${<}$$"){
+    if(param$type == "$${H_A: \\mu < \\mu_0}$$"){
     withMathJax(
     paste("The current drug makes patients recover in ", param$hyp, " days on average, and the new company says that their drug will help patients recover in less than ", param$hyp, " days on average. Our hypotheses are:")
     )
-    } else if(param$type == "$${>}$$"){
+    } else if(param$type == "$${H_A: \\mu > \\mu_0}$$"){
       withMathJax(
         paste("The current drug makes patients recover in ", param$hyp, " days on average, and the new company says that their drug will help patients recover in more than ", param$hyp, " days on average. Our hypotheses are:")
       )
@@ -582,11 +585,11 @@ server <- function(input, output) {
   })
   
   output$reach0 <- renderUI({
-    if(param$type == "$${<}$$"){
+    if(param$type == "$${H_A: \\mu < \\mu_0}$$"){
       withMathJax(
         paste("Null hypothesis: Patient recovery time is greater than or equal to ", param$hyp, " days. ${H_0: \\mu \\geq}$", param$hyp)
       )
-    } else if(param$type == "$${>}$$"){
+    } else if(param$type == "$${H_A: \\mu > \\mu_0}$$"){
       withMathJax(
         paste("Null hypothesis: Patient recovery time is less than or equal to ", param$hyp, " days. ${H_0: \\mu \\leq}$", param$hyp)
       )
@@ -599,11 +602,11 @@ server <- function(input, output) {
   })
   
   output$reacha <- renderUI({
-    if(param$type == "$${<}$$"){
+    if(param$type == "$${H_A: \\mu < \\mu_0}$$"){
       withMathJax(
         paste("Alternative hypothesis: Patient recovery time is less than ", param$hyp, " days. ${H_A: \\mu <}$", param$hyp)
       )
-    } else if(param$type == "$${>}$$"){
+    } else if(param$type == "$${H_A: \\mu > \\mu_0}$$"){
       withMathJax(
         paste("Alternative hypothesis: Patient recovery time is greater than ", param$hyp, " days. ${H_A: \\mu >}$", param$hyp)
       )
@@ -626,8 +629,8 @@ server <- function(input, output) {
   # Text for Null and Alternative Hypotheses Tab 
   output$tab11 <- renderText({ c("When performing a hypothesis test, we must start with our claims, or hypotheses. There are two main criteria to form proper hypotheses: ")})
   output$conditions <- renderUI(HTML("<ul><li>The two hypotheses must be mutually exclusive (i.e., they cannot both be true at the same time)</li><li>Together, they must cover the entire range of possibilities</li></ul>"))
-  output$tab12 <- renderText({ c("Thus, there are three possible sets of hypotheses, where ${h}$ is the hypothesized value: ")})
-  output$typehyp <- renderUI(withMathJax(HTML("<ul><li>${H_0}$: ${\\mu \\leq h}$, ${H_A}$: ${\\mu > h}$</li><li>${H_0}$: ${\\mu \\geq h}$, ${H_A}$: ${\\mu < h}$</li><li>${H_0}$: ${\\mu = h}$, ${H_A}$: ${\\mu \\neq h}$</li></ul>")))
+  output$tab12 <- renderText({ c("Thus, there are three possible sets of hypotheses, where ${\\mu_0}$ is the hypothesized value: ")})
+  output$typehyp <- renderUI(withMathJax(HTML("<ul><li>${H_0}$: ${\\mu \\leq \\mu_0}$, ${H_A}$: ${\\mu > \\mu_0}$</li><li>${H_0}$: ${\\mu \\geq \\mu_0}$, ${H_A}$: ${\\mu < \\mu_0}$</li><li>${H_0}$: ${\\mu = \\mu_0}$, ${H_A}$: ${\\mu \\neq \\mu_0}$</li></ul>")))
   output$choose1 <- renderText({ c("Use the sidebar to choose an ")})
   output$choosealt <- renderText({ c("alternative hypothesis")})
   output$choose3 <- renderText({ c(", which also determines the ")})
@@ -637,7 +640,7 @@ server <- function(input, output) {
   output$choose5 <- renderText({ c(") and alternative (")})
   output$tab1red <- renderText({ c("red")})
   output$choose6 <- renderText({ c(") distributions change.")})
-  output$tab13 <- renderText({ c("Interpreting Conclusions")})
+  output$tab13 <- renderText({ c("Meaning of the Hypothesis Test")})
   output$tab14 <- renderText({ c('When we perform the test, it is important to remember that no matter what our conclusions are, we have not "proved" either claim to be indisputably true; we have simply observed a sample dataset that either has strong evidence against the status quo or does not. We will either: ')})
   output$conc <- renderUI(withMathJax(HTML("<ul><li>Reject the null hypothesis, meaning that the evidence was strong enough for us to reject ${H_0}$ and be in favor of ${H_A}$, or</li><li>Fail to reject the null hypothesis, meaning that the evidence was not strong enough to support ${H_A}$ and reject ${H_0}$.</li></ul>")))
   output$tab15 <- renderText({ c("Neither hypothesis is definitely proved, confirmed, or disproved -- the test will only tell us which conclusion this dataset supports.")})
@@ -785,7 +788,7 @@ server <- function(input, output) {
         theme_bluewhite() +
         theme(axis.text.y = element_blank()) 
    
-       } else if(isolate({input$typetest == "$${<}$$"})){
+       } else if(isolate({input$typetest == "$${H_A: \\mu < \\mu_0}$$"})){
 
        ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
          geom_line(col = "blue", size = 1.5) +
@@ -795,7 +798,7 @@ server <- function(input, output) {
           theme_bluewhite() +
           theme(axis.text.y = element_blank())
 
-      } else if(isolate({input$typetest == "$${>}$$"})){
+      } else if(isolate({input$typetest == "$${H_A: \\mu > \\mu_0}$$"})){
 
         ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
           geom_line(col = "blue", size = 1.5) +
@@ -825,7 +828,7 @@ server <- function(input, output) {
   
   # Test Statistic and P-Value tab
   results <- reactive({
-    if(param$type == "$${<}$$"){
+    if(param$type == "$${H_A: \\mu < \\mu_0}$$"){
       
       realmean <- sample(c(as.numeric(param$hyp), as.numeric(param$hyp) - 3), 1)
       altlessvals <- rnorm(20, realmean, oursd)
@@ -842,7 +845,7 @@ server <- function(input, output) {
                  pval = pval, critval = critval, tpos = tpos, critpos = critpos,
                  alpha = param$alpha, hyp = param$hyp, realmean = realmean)
       
-    } else if(param$type == "$${>}$$"){
+    } else if(param$type == "$${H_A: \\mu > \\mu_0}$$"){
       
       realmean <- sample(c(as.numeric(param$hyp), as.numeric(param$hyp) + 3), 1)
       altmorevals <- rnorm(20, realmean, oursd)
@@ -903,7 +906,7 @@ server <- function(input, output) {
       }
         })
     output$displayalpha <- renderUI({
-      if(param$type == "$${\\neq}$$"){
+      if(param$type == "$${H_A: \\mu \\neq \\mu_0}$$"){
         
         withMathJax( paste("${\\alpha = ", results()$alpha, "}$ (${", results()$alpha /2, "}$ per side)"))
         
@@ -915,7 +918,7 @@ server <- function(input, output) {
       
       })
     output$displaycrit <- renderText({
-      if(param$type == "$${\\neq}$$"){
+      if(param$type == "$${H_A: \\mu \\neq \\mu_0}$$"){
        
           paste("Critical Values: ${", round(results()$critval1, 4), "}$ and ${", round(results()$critval2, 4), "}$")
         
@@ -926,7 +929,7 @@ server <- function(input, output) {
     
     output$conclusion <- renderUI({
       
-      if(param$type == "$${\\neq}$$"){
+      if(param$type == "$${H_A: \\mu \\neq \\mu_0}$$"){
         
         if(as.numeric(results()$pval) < (as.numeric(results()$alpha) / 2)){
           withMathJax( c("Conclusion: Reject ${H_0}$"))
@@ -965,7 +968,7 @@ server <- function(input, output) {
           geom_text(aes(x=results()$critpos, label="rejection region", y=0.1, size = 20), colour="palevioletred", angle=90, vjust = -1, size = 7)
         
         
-      } else if(isolate({input$typetest == "$${<}$$"})){
+      } else if(isolate({input$typetest == "$${H_A: \\mu < \\mu_0}$$"})){
         
         ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
           geom_line(col = "blue", size = 1.5) +
@@ -980,7 +983,7 @@ server <- function(input, output) {
           geom_text(aes(x=results()$tpos, label="observed mean", y=0.14), colour="blueviolet", angle=90, vjust = 1, size = 7)+
           geom_text(aes(x=results()$critpos, label="rejection region", y=0.1, size = 20), colour="palevioletred", angle=90, vjust = -1, size = 7)
         
-      } else if(isolate({input$typetest == "$${>}$$"})){
+      } else if(isolate({input$typetest == "$${H_A: \\mu > \\mu_0}$$"})){
         
         ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
           geom_line(col = "blue", size = 1.5) +
@@ -1042,7 +1045,7 @@ server <- function(input, output) {
     
     output$tdistplot <- renderPlot({
       
-      if(isolate({input$typetest == "$${<}$$"})){
+      if(isolate({input$typetest == "$${H_A: \\mu < \\mu_0}$$"})){
         
         ggplot(data = tdist, aes(x = tvals, y = tdens)) +
           geom_line(col = "black", size = 1.5) +
@@ -1058,7 +1061,7 @@ server <- function(input, output) {
           geom_text(aes(x=results()$critval, label="critical value", y=0.27, size = 20), colour="palevioletred", angle=90, vjust = -1, size = 7) 
           
       
-      } else if(isolate({input$typetest == "$${>}$$"})){
+      } else if(isolate({input$typetest == "$${H_A: \\mu > \\mu_0}$$"})){
         
         ggplot(data = tdist, aes(x = tvals, y = tdens)) +
           geom_line(col = "black", size = 1.5) +
@@ -1152,7 +1155,7 @@ server <- function(input, output) {
             geom_area(data = subset(plotdatalite, nullvals < results()$critpos), colour = "red", fill = "red", alpha = 0.4)
 
           
-        } else if(isolate({input$typetest == "$${<}$$"})){
+        } else if(isolate({input$typetest == "$${H_A: \\mu < \\mu_0}$$"})){
           
           ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
             geom_line(col = "blue", size = 1.5) +
@@ -1163,7 +1166,7 @@ server <- function(input, output) {
             theme(axis.text.y = element_blank()) +
             geom_area(data = subset(plotdata(), nullvals < results()$critpos), colour = "red", fill = "red", alpha = 0.4)
           
-        } else if(isolate({input$typetest == "$${>}$$"})){
+        } else if(isolate({input$typetest == "$${H_A: \\mu > \\mu_0}$$"})){
           
           ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
             geom_line(col = "blue", size = 1.5) +
@@ -1233,7 +1236,7 @@ server <- function(input, output) {
             
           
           
-        } else if(isolate({input$typetest == "$${<}$$"})){
+        } else if(isolate({input$typetest == "$${H_A: \\mu < \\mu_0}$$"})){
           
           ggplot(data = plotdata(), aes(x = altlessvals, y = altlessdens)) +
             geom_line(col = "red", size = 1.5) +
@@ -1247,7 +1250,7 @@ server <- function(input, output) {
             geom_vline(xintercept = results()$critpos, color = "palevioletred", size = 1.5) +
             geom_text(aes(x=results()$critpos, label="rejection threshold", y=0.14, size = 20), colour="black", angle=90, vjust = -1, size = 7)
           
-        } else if(isolate({input$typetest == "$${>}$$"})){
+        } else if(isolate({input$typetest == "$${H_A: \\mu > \\mu_0}$$"})){
           
           ggplot(data = plotdata(), aes(x = altmorevals, y = altmoredens)) +
             geom_line(col = "red", size = 1.5) +
@@ -1329,7 +1332,7 @@ server <- function(input, output) {
       output$tab3r4 <- renderText({ c("Using your parameters from the sidebar and the sliders below, adjust the values to see how P(Type II Error) changes.")})
       output$redpower <- renderText({
         
-        if(isolate({input$typetest == "$${<}$$"})){
+        if(isolate({input$typetest == "$${H_A: \\mu < \\mu_0}$$"})){
           
           test <- pwr.t.test(d = -as.numeric(rederrorvals$dev)/2, n = as.numeric(rederrorvals$samp), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "less")
           
@@ -1337,7 +1340,7 @@ server <- function(input, output) {
           
           paste("Power, or $1 - \\beta$: ", round(power, 5))
           
-        } else if(isolate({input$typetest == "$${>}$$"})){ 
+        } else if(isolate({input$typetest == "$${H_A: \\mu > \\mu_0}$$"})){ 
         
           test <- pwr.t.test(d = as.numeric(rederrorvals$dev)/2, n = as.numeric(rederrorvals$samp), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "greater")
           
@@ -1360,7 +1363,7 @@ server <- function(input, output) {
       
       output$redbeta <- renderText({
         
-        if(isolate({input$typetest == "$${<}$$"})){
+        if(isolate({input$typetest == "$${H_A: \\mu < \\mu_0}$$"})){
           
           test <- pwr.t.test(d = -as.numeric(rederrorvals$dev)/2, n = as.numeric(rederrorvals$samp), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "less")
           
@@ -1368,7 +1371,7 @@ server <- function(input, output) {
           
           paste("P(Type II Error), or $\\beta$: ", round(1-power, 5))
           
-        } else if(isolate({input$typetest == "$${>}$$"})){ 
+        } else if(isolate({input$typetest == "$${H_A: \\mu > \\mu_0}$$"})){ 
           
           test <- pwr.t.test(d = as.numeric(rederrorvals$dev)/2, n = as.numeric(rederrorvals$samp), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "greater")
           
@@ -1388,6 +1391,10 @@ server <- function(input, output) {
         }
         
       })
+      
+      #Further Resources
+      
+      output$resources <- renderUI(HTML("<ul><li><i>OpenIntro Statistics</i> by Christopher Barr, David M. Diez, and Mine Cetinkaya-Rundel: Section 5</li><li><i>Probability and Statistics for Engineering and the Sciences</i> by Jay Devore: Chapter 8</li></ul>"))
       
       
       
