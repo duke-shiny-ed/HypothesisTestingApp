@@ -1,7 +1,8 @@
 ---
-title: "Tutorial"
+title: "Hypothesis Tests"
 output: learnr::tutorial
 runtime: shiny_prerendered
+description: "Test your knowledge!"
 ---
 
 ```{r setup, include=FALSE}
@@ -9,18 +10,20 @@ library(learnr)
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-### Quiz
+### Test your knowledge!
+##### Click "Hypothesis Tests" above for a "Start Over" button.
 
 
 ```{r quiz}
 quiz(
   question("How do we practically interpret a conclusion of reject $H_0$?",
-    answer("We proved that $H_0$ is false.", message = "This is just one test with one set of data -- have we definitively proved anything?"),
+    answer("The data provide sufficient evidence to prove that $H_0$ is false.", message = "This is just one test with one set of data -- have we definitively proved anything?"),
     answer("We proved that $H_A$ is true.", message = "This is just one test with one set of data -- have we definitively proved anything?"),
     answer("The data provide strong enough evidence to confirm that $H_A$ is true.", message = "This is just one test with one set of data -- are we able to confirm the truth from that?"),
     answer("The data provide sufficient evidence against $H_0$ to reject it in favor of $H_A$.", correct = TRUE),
     
-    allow_retry = TRUE
+    allow_retry = TRUE,
+    random_answer_order = TRUE
   ),
 
 
@@ -31,7 +34,8 @@ quiz(
     answer("Assuming $H_0$ is true, the probability of observing data with a test statistic as or more extreme than the one calculated is 0.08.", correct = TRUE),
     answer("The probability that $H_0$ is true is 0.08.", message = "The p-value is a way to summarize the data we've seen -- more than one sample dataset would be required to find P($H_0$ true)."),
     
-    allow_retry = TRUE
+    allow_retry = TRUE,
+    random_answer_order = TRUE
   ),
   
   question("The power of a test is",
@@ -39,14 +43,17 @@ quiz(
            answer("P(reject $H_0$ | $H_0$ false)", correct = TRUE),
            answer("$1-\\beta$", correct = TRUE),
            answer("None of the above", message = "Review the Type II Error section -- the answer is here (maybe more than once!)."),
-           allow_retry = TRUE
+           allow_retry = TRUE,
+           random_answer_order = TRUE
         ),
   
   question("How can we reduce the Type I Error rate?",
            answer("Reduce the significance level, i.e. choose a lower $\\alpha$", correct = TRUE),
            answer("Increase the significance level, i.e. choose a higher $\\alpha$", message = "Since $\\alpha$ = P(reject $H_0$ | $H_0$ true), increasing it would result in more Type I errors."),
            answer("Choose a lower test statistic and higher p-value.", message = "We can't exactly 'choose' the test statistic or p-value; these calculations just result from our observed data."),
-           answer("None of the above", message = "What can P(Type I error) also be called? What should we do with that probability so it occurs less?"), allow_retry = TRUE
+           answer("None of the above", message = "What can P(Type I error) also be called? What should we do with that probability so it occurs less?"), 
+           allow_retry = TRUE,
+           random_answer_order = TRUE
   ),
   
   question("How can we reduce the Type II Error rate?",
@@ -54,8 +61,62 @@ quiz(
            answer("Reduce $\\beta$.", correct = TRUE),
            answer("Increase the sample size.", correct = TRUE),
            answer("Reduce the significance level, i.e. choose a lower $\\alpha$.", message = "Reducing significance level would effectively lower the Type I Error rate."),
-           allow_retry = TRUE
-  )
+           allow_retry = TRUE,
+           random_answer_order = TRUE
+  ),
+  
+  question("What is an appropriate set of null and alternative hypotheses?",
+           answer("$H_0: \\bar{x} = \\mu_0$, $H_A: \\bar{x} > \\mu_0$", message = "Hypothesis testing is making statements about a population parameter -- we don't have to hypothesize about the sample statistics; we can just calculate them because, unlike the entire population, the sample is available to us!"),
+           answer("$H_0: \\mu = \\mu_0$, $H_A: \\mu > \\mu_0$", correct = TRUE),
+           answer("$H_0: \\mu > \\mu_0$, $H_A: \\mu = \\mu_0$", message = "Which hypothesis should include $=$?"),
+           answer("$H_0: \\bar{x} \\neq \\mu_0$, $H_A: \\bar{x} = \\mu_0$", message = "Two issues here -- first, which hypothesis should include $=$? Also, hypothesis testing is making statements about a population parameter -- we don't have to hypothesize about the sample statistics; we can just calculate them because, unlike the entire population, the sample is available to us!"),
+           allow_retry = TRUE,
+           random_answer_order = TRUE
+           ),
+  
+  question("The test statistic can be interpreted as:",
+           answer("a summary of the sample data, telling us how far it falls from the null hypothesis.", correct = TRUE),
+           answer("the value of the statistic of interest calculated from the sample.", message = "The test statistic is related to the sample statistic, but they aren't completely equivalent."),
+           answer("the probability that we will reject the null hypothesis, given that it is true.", message = "P(reject $H_0$ | $H_0$ true) is actually P(Type I Error)."),
+           answer("the threshold where, if the p-value is smaller, we will reject the null hypothesis.", message = "This threshold is actually the significance level or $\\alpha$."),
+           allow_retry = TRUE,
+           random_answer_order = TRUE
+           ),
+  
+  question("P(Type I Error) is calculated under what assumption?",
+           answer("We assume the null hypothesis is true.", correct = TRUE),
+           answer("We assume the alternative hypothesis is true.", message = "Type I Error means we incorrectly reject the null hypothesis, but if the alternative hypothesis were true, it wouldn't be incorrect to reject the null hypothesis!"),
+           answer("We assume that either hypothesis could be true and account for the probability of either situation.", message = "Type I Error means we incorrectly reject the null hypothesis. Can you make a Type I Error when the null hypothesis is true? Can you also make a Type I Error when the alternative hypothesis is true?"),
+           answer("There are no assumptions.", message = "Type I Error happens when we incorrectly reject the null hypothesis. For that conclusion to be incorrect, we have to assume that a certain condition is true."),
+           
+          allow_retry = TRUE,
+          random_answer_order = TRUE
+           
+           ),
+  
+    question("P(Type II Error) is calculated under what assumption?",
+           answer("We assume the null hypothesis is true.", message = "Type II Error means we incorrectly fail to reject the null hypothesis, but if the null hypothesis were true, it wouldn't be incorrect to fail to reject it!"),
+           answer("We assume the alternative hypothesis is true.", correct = TRUE),
+           answer("We assume that either hypothesis could be true and account for the probability of either situation.", message = "Type II Error means we incorrectly fail to reject the null hypothesis. Can you make a Type II Error when the alternative hypothesis is true? Can you also make a Type II Error when the null hypothesis is true?"),
+           answer("There are no assumptions.", message = "Type II Error happens when we incorrectly fail to reject the null hypothesis. For that conclusion to be incorrect, we have to assume that a certain condition is true."),
+           
+      allow_retry = TRUE,
+      random_answer_order = TRUE
+  
+),
+
+    question("With a significance level of $\\alpha = 0.05$, what reasonable p-value would result in rejecting the null hypothesis?",
+             answer("$p = 0.00611$", correct = TRUE),
+             answer("$p = -0.023$", message = "The p-value is the probability of observing data that yields a test statistic as extreme or more extreme than what we've observed. Does a negative probability make sense?"),
+             answer("$p = 1.3$", message = "The p-value is the probability of observing data that yields a test statistic as extreme or more extreme than what we've observed. Can a probability be greater than 1?"),
+             answer("$p = 0.8$", message = "Take another look at the rules for a hypothesis test conclusion -- what relationship between $\\alpha$ and the p-value results in rejecting the null hypothesis?"),
+             allow_retry = TRUE,
+      random_answer_order = TRUE
+             
+             
+             )
+
+
 )
 ```
 
