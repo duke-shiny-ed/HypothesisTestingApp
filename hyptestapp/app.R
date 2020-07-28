@@ -99,29 +99,31 @@ MathJax.Hub.Config({
              tabPanel("Overview",
                       h2("Our App", align = "center"),
             
-                      h4("Welcome to Duke University's hypothesis testing app! Here, you can learn about the crucial aspects of conducting and interpreting a hypothesis test, including setting your hypotheses, calculating a test statistic and p-value, making your conclusions, and navigating types of possible errors in your test.", align = "center"),
+                      h4("Welcome to Duke University's hypothesis testing app! Here, you can learn about the crucial aspects of conducting and interpreting a hypothesis test, including setting your hypotheses, calculating a test statistic and p-value, making your conclusions, and navigating types of possible errors in your test."),
                       br(),
-                      h4("Often in research and data analysis, we want to investigate certain new claims that challenge what is currently believed, so we take some sample data and see whether or not it supports our new claim. However, as there can be significant variation in sample data, we may not know if the evidence our data provide is because it truly supports our new claim or if it was just the result of random fluctuation in the sample. Hypothesis testing is a reliable way to take sample data and test how strongly its evidence supports our new claim -- if the evidence is strong, we can reject the old beliefs and support the new; if it is weak, we cannot reject the old beliefs. Make sure to check out the running example we'll be using throughout the app and how to change its parameters!", align = "center"),
-                      p(textOutput("tabov1", inline = TRUE), span(textOutput("tabov2", inline = TRUE), style = "color:cornflowerblue; font-size:18px"), textOutput("tabov3", inline = TRUE), align = "center" ),
+                      h4("Often in research and data analysis, we want to investigate certain new claims that challenge what is currently believed, so we take some sample data and see whether or not it supports our new claim. However, as there can be significant variation in sample data, we may not know if the evidence our data provide is because it truly supports our new claim or if it was just the result of random fluctuation in the sample. Hypothesis testing is a reliable way to take sample data and test how strongly its evidence supports our new claim -- if the evidence is strong, we can reject the old beliefs and support the new; if it is weak, we cannot reject the old beliefs. Make sure to check out the running example we'll be using throughout the app and how to change its parameters!"),
+                      p(textOutput("tabov1", inline = TRUE), span(textOutput("tabov2", inline = TRUE), style = "color:cornflowerblue; font-size:18px"), textOutput("tabov3", inline = TRUE)),
                       
                       bsPopover("tabov2", "Find extra information here!", trigger = 'hover', placement = 'top'),
                       
                       h2("Our Example", align = "center"),
-                      h4("There is a commonly used drug to treat flu patients that generally helps them recover within a certain number of days on average. A new drug is being developed by a competing company, and they believe that flu patients who use their new drug will recover in a different number of days on average than they would with the current drug.", align = "center"),
+                      h4("There is a commonly used drug to treat flu patients that generally helps them recover within a certain number of days on average. A new drug is being developed by a competing company, and they believe that flu patients who use their new drug will recover in a different number of days on average than they would with the current drug."),
                       br(),
-                      h4("Suppose the current drug makes patients recover in about 5 days on average, and the new company says that their drug will help patients recover in less than 5 days on average. We experiment with giving 20 patients the new drug, and our hypotheses are:", align = "center"),
+                      h4("Suppose the current drug makes patients recover in about 5 days on average, and the new company says that their drug will help patients recover in less than 5 days on average. We experiment with giving 20 patients the new drug, and our hypotheses are:"),
                       br(),
                       div(id = "helptext1", helpText("Null hypothesis: Patient recovery time is equal to five days:     ${H_0: \\mu = 5}$", align = "center")),
                       div(id = "helptext2", helpText("Alternative hypothesis: Patient recovery time is less than five days:     ${H_A:  \\mu < 5}$", align = "center")),
                       br(),
                       h4("You can test these hypotheses (and find explanations of the hypotheses themselves) in the following tabs. You can also use the sidebar on the tabs to change the parameters -- you can choose the type of test, the hypothesized value, and the level of significance to see how these affect the test and your conclusions."),
-                      br()
+                      br(),
+                      h6("Created by Abbey List for the ShinyEd project at Duke University, Summer 2020. Hosted by the Duke University Statistical Science Department.", align = "center")
+                      
                      
              ),
              
              # Compare by State
              
-             tabPanel("Null and Alternative Hypotheses",
+             tabPanel("Null/Alternative Hypotheses",
                       
                       tags$head(tags$style("#helptext1{
                                           text-align: center
@@ -278,7 +280,7 @@ MathJax.Hub.Config({
                                            } #tab3r3{
                                            font-size: 17px
                                            } #tab3rII{
-                                           font-size: 15px
+                                           font-size: 17px
                                            } #tab3r4{
                                            font-size: 17px
                                            } #redbeta{
@@ -332,7 +334,7 @@ MathJax.Hub.Config({
                       
                       ),
              
-             tabPanel("Test Statistic and P-Value",
+             tabPanel("Test Statistic/P-Value",
                     
                       # Title/subtitle
                       
@@ -407,7 +409,7 @@ MathJax.Hub.Config({
                       
                       ),
              
-             tabPanel("Type I and Type II Errors",
+             tabPanel("Type I/Type II Errors",
                       
                       # Title/subtitle
                       
@@ -468,11 +470,10 @@ MathJax.Hub.Config({
                                  textOutput("tab3r"),
                                  br(),
                                  uiOutput("tab3r2"),
+                               
+                                 
                                  br(),
-                                 textOutput("tab3r3"),
-                                 br(),
-                                 uiOutput("tab3rII"),
-                                 br(),
+                                 
                                  textOutput("tab3r4"),
                                  br(),
                                  
@@ -498,40 +499,73 @@ MathJax.Hub.Config({
                                           uiOutput("redpower")
                                    )
                                    
-                                 )
+                                 ),
+                                 
+                                
+                                 p(textOutput("tab3r3", inline = TRUE), span(textOutput("tab3rII", inline = TRUE), style = "color:cornflowerblue; font-size:17px"), align = 'center'),
+                                 bsPopover(id = "tab3rII", "<ul><li>Increase power - Since power and Type II Error are inversely related, higher power means lower Type II Error.</li><br><li>Increase sample size - Higher sample size makes it easier to detect when the distribution truly differs from the null hypothesis and is not just showing random variability.</li><br><li>Increase difference from the null to be detected - When the alternative distribution is further away (larger difference) from the null, we will be able to reject the null more often.</li><br><li>Increase significance level - Increasing P(Type I Error) results in more correct rejections of the null, but it also yields more incorrect rejections, so this method should be used with caution.</li></ul>", trigger = 'hover', placement = 'right')
                         )
-                        
-                        
                         
                       ) # close tabsetPanel
                       
                       ),
              
-             tabPanel("Review Quiz",
+             tabPanel("Quiz",
                       
                       # Title/subtitle
                       
                       h2("Wrapping Up with a Review Quiz!", align = "center"),
                       
-                      sidebarLayout(
-                        sidebarPanel(width = 5,
-                          h4("Acknowledgements and Further Resources"),
-                          uiOutput("resources"),
-                          div(img(src = "DukeShinyLogo2.png", height = 265, width = 235), style="text-align: center;"),
-                          h6("Created by Abbey List for the ShinyEd project at Duke University, Summer 2020. Hosted by the Duke University Statistical Science Department.")
-                          
-                        ),
-                        mainPanel(width = 7,
+                     
+                       
                                   h3("Let's review!", align = "center"),
                                   
                                   tags$iframe(src = "https://grace-shiny.shinyapps.io/Quiz_HypothesisTesting/",
-                                              width = "666", height = "515",
+                                              width = "1000", height = "515",
                                               frameBorder="0")
                                   
-                                  ),
-                        
-                        position = "right"
-                      ) # close Review Quiz sidebarLayout
+                                
+                      
+                      ),
+             tabPanel("Resources",
+                      
+                      fluidRow(
+                        column(width = 7,
+                                      
+                               h2("Acknowledgements and Further Resources"),
+                               uiOutput("resources")
+                                      ),
+                        column(width = 5,
+                               
+                               div(img(src = "DukeShinyLogo2.png", height = 265, width = 235), style="text-align: center;")
+                               
+                               
+                               )
+                               
+                               
+                               ),
+                      br(),
+                      br(),
+                      br(),
+                      
+                      h4("Thank you for using and supporting this statistical education app -- we hope you enjoyed learning about hypothesis testing!", align = "center"),
+                      
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      br(),
+                      h6("Created by Abbey List for the ShinyEd project at Duke University, Summer 2020. Hosted by the Duke University Statistical Science Department.", align = "center")
+                      
+                      
+                      
                       
                       )
              
@@ -728,7 +762,7 @@ server <- function(input, output) {
   
   # Hige sidebar on Overview and Review Quiz tabs
    observeEvent(input$tabs, {
-     if(input$tabs == "Overview" || input$tabs == "Review Quiz"){
+     if(input$tabs == "Overview" || input$tabs == "Quiz" || input$tabs == "Resources"){
          shinyjs::hide(id = "Sidebar")
 
          } else{
@@ -738,7 +772,7 @@ server <- function(input, output) {
   
   # Ensure that mainPanel expands to full screen when sidebar is hidden in Overview/Review Quiz tabs
   observe({
-    if (input$tabs %in% c("Type I and Type II Errors", "Test Statistic and P-Value", "Null and Alternative Hypotheses")) {
+    if (input$tabs %in% c("Type I/Type II Errors", "Test Statistic/P-Value", "Null/Alternative Hypotheses")) {
       shinyjs::show(select = "#sblay > div > div:nth-child(1)")
       shinyjs::removeClass(class = "fullwidth",
                            select = "#sblay > div > div:nth-child(2)")
@@ -1389,9 +1423,9 @@ server <- function(input, output) {
       
       output$tab3r <- renderText({ c("When performing a hypothesis test, we generally want to reduce the probability of error as much as possible. There are several ways to reduce error.")})
       output$tab3r2 <- renderUI({ withMathJax(c("For Type I Error, the main way to reduce its probability is to choose a lower $\\alpha$, as this value can generally be fixed by the researcher."))})
-      output$tab3r3 <- renderText({ c("For Type II Error, there are multiple methods to reduce its probability: ")})
-      output$tab3rII <- renderUI(HTML("<ul><li>Increase power - Since power and Type II Error are inversely related, higher power means lower Type II Error.</li><br><li>Increase sample size - Higher sample size makes it easier to detect when the distribution truly differs from the null hypothesis and is not just showing random variability.</li><br><li>Increase difference from the null to be detected - When the alternative distribution is further away (larger difference) from the null, we will be able to reject the null more often.</li><br><li>Increase significance level - Increasing P(Type I Error) results in more correct rejections of the null, but it also yields more incorrect rejections, so this method should be used with caution.</li></ul>"))
-      output$tab3r4 <- renderText({ c("Using your parameters from the sidebar and the sliders below, adjust the values to see how P(Type II Error) changes.")})
+      output$tab3r3 <- renderText({ c("As you can see, there are multiple methods to ")})
+      output$tab3rII <- renderText({ c("reduce Type II Error.")})
+      output$tab3r4 <- renderText({ c("What about Type II Error? Using your parameters from the sidebar and the sliders below, adjust the values to see how P(Type II Error) changes.")})
       output$redpower <- renderUI({
         
         if(isolate({input$typetest == "$${H_A: \\mu < \\mu_0}$$"})){

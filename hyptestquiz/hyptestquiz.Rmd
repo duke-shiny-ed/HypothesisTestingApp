@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ### Test your knowledge!
-##### Click "Hypothesis Tests" above for a "Start Over" button.
+##### Try answering the questions below to check your understanding of hypothesis testing.
 
 
 ```{r quiz}
