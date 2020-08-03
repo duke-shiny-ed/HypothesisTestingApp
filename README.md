@@ -9,6 +9,6 @@ Often in research and data analysis, we want to investigate certain new claims t
 
 - Identify appropriate null ($H_0$) and alternative ($H_A$) hypotheses for a problem scenario, and effectively interpret test conclusions in terms of the hypotheses/practical scenario.
 
-- Properly calculate and interpret test statistic, p-value, and alpha ($\alpha$) level, and understand how to use them to make a conclusion. Understand how sample size can affect test statistic and p-value.
+- Properly calculate and interpret test statistic, p-value, and alpha ($\alpha$) level, and understand how to use them to make a conclusion.  
 
 - Correctly define and interpret Type I and Type II errors, and calculate their probabilities, given various parameters such as alpha ($\alpha$), sample size, and testing power. Understand the conditions/assumptions under which each type of error may occur.
