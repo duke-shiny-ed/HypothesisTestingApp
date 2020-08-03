@@ -45,7 +45,7 @@ MathJax.Hub.Config({
     
     div(id = "Sidebar", sidebarPanel(width = 3,
                                 
-                 bsPopover(id = "helpt", "Use this sidebar to select parameters for the scenario. Select a type of test/alternative hypothesis (explained more on Null/Alternative Hypotheses tab), hypothesized value (5 by default), and significance level (available in tabs after Null/Alternative Hypotheses; explained more on Test Statistic/P-Value tab). Press Update Simulation to update the hypothesis test outputs throughout the app, including the text description of the new scenario at the bottom of the sidebar.", trigger = "hover"),
+                 bsPopover(id = "helpt", "Use this sidebar to select parameters for the scenario. Select a type of test/alternative hypothesis (explained more on Null/Alternative Hypotheses tab), hypothesized value (5 by default), and significance level (available in tabs after Null/Alternative Hypotheses; explained more on Test Statistic/P-Value tab). Press Update Parameters to update the hypothesis test outputs throughout the app, including the text description of the new scenario at the bottom of the sidebar.", trigger = "hover"),
                  textOutput("helpt"),
                  
                  tags$head(tags$style("#helpt{color: cornflowerblue;
@@ -64,18 +64,36 @@ MathJax.Hub.Config({
                 div(id = "alphachoice", radioButtons("alpha", "Choose a significance level:",
                               choices = c("0.01", "0.05", "0.1"))
                 ),
-                 
+                 div(id = "firstupdate",
                  fluidRow(
-                   column(1),
-                 actionButton("update", "Update Simulation!"),
+                   
+                 actionButton("update", "Update Parameters!"),
                  tags$head(tags$style("#update{color: white;
                                       background-color: mediumseagreen;
                                       text-align: center;
+                                      } #firstupdate{
+                                      text-align: center;
                                       }"
                          )
+                 )
+                 )
                  ),
-                 column(1)
-                 ),
+                br(),
+                
+                div(id = "updatedata", 
+                    fluidRow(
+                  
+                  actionButton("updatedat", "Re-Simulate Data!"),
+                  tags$head(tags$style("#updatedat{color: white;
+                                       background-color: mediumseagreen;
+                                       text-align: center;
+                                       } #updatedata{
+                                       text-align: center;
+                                       }"
+                         )
+                  )
+                  )
+                ),
                  br(),
                  h5("Current Description of Scenario:"),
                  uiOutput("reactext"),
@@ -700,7 +718,7 @@ server <- function(input, output) {
   output$choosealt <- renderText({ c("alternative hypothesis")})
   output$choose3 <- renderText({ c(", which also determines the ")})
   output$choosenull <- renderText({ c("null hypothesis")})
-  output$choose4 <- renderText({ c(", and click Update Simulation see how the plotted null (")})
+  output$choose4 <- renderText({ c(", and click Update Parameters see how the plotted null (")})
   output$tab1blue <- renderText({ c("blue")})
   output$choose5 <- renderText({ c(") and alternative (")})
   output$tab1red <- renderText({ c("red")})
@@ -786,6 +804,17 @@ server <- function(input, output) {
     }
     
   })
+  
+  observeEvent(input$tabs, {
+    if(input$tabs == "Test Statistic/P-Value"){
+      shinyjs::show(id = "updatedata")
+      
+    } else {
+      shinyjs::hide(id = "updatedata")
+      
+    }
+  })
+  
   
   theme_bluewhite <- function (base_size = 11, base_family = "") {
     theme_bw() %+replace% 
@@ -914,13 +943,40 @@ server <- function(input, output) {
   })
   
   # Test Statistic and P-Value tab
-  results <- reactive({
+  
+  sampledata <- reactiveValues(data = rnorm(oursamp, 5, oursd/sqrt(oursamp)),
+                               realmean = 5)
+  
+  observeEvent(input$updatedat, {
+    
     if(param$type == "$${H_A: \\mu < \\mu_0}$$"){
       
       realmean <- sample(c(as.numeric(param$hyp), as.numeric(param$hyp) - ournulldev), 1)
-      altlessvals <- rnorm(oursamp, realmean, oursd/sqrt(oursamp))
-      sampmean <- mean(altlessvals)
-      sampsd <- sd(altlessvals)
+      sampledata$data <- rnorm(oursamp, realmean, oursd/sqrt(oursamp))
+      sampledata$realmean = realmean
+      
+      
+    } else if(param$type == "$${H_A: \\mu > \\mu_0}$$"){
+      
+      realmean <- sample(c(as.numeric(param$hyp), as.numeric(param$hyp) + ournulldev), 1)
+      sampledata$data <- rnorm(oursamp, realmean, oursd/sqrt(oursamp))
+      sampledata$realmean = realmean
+      
+    } else{
+      
+      realmean <- sample(c(as.numeric(param$hyp), as.numeric(param$hyp) - ournulldev, as.numeric(param$hyp) + ournulldev), 1)
+      sampledata$data <- rnorm(oursamp, realmean, oursd/sqrt(oursamp))
+      sampledata$realmean = realmean
+      
+    }
+    
+  })
+  
+  results <- reactive({
+    if(param$type == "$${H_A: \\mu < \\mu_0}$$"){
+      
+      sampmean <- mean(sampledata$data)
+      sampsd <- sd(sampledata$data)
       
       tstat <- (sampmean - as.numeric(param$hyp)) / (sampsd / sqrt(oursamp))
       pval <- pt(tstat, oursamp-1)
@@ -930,14 +986,12 @@ server <- function(input, output) {
       
       data.frame(sampmean = sampmean, sampsd = sampsd, tstat = tstat,
                  pval = pval, critval = critval, tpos = tpos, critpos = critpos,
-                 alpha = param$alpha, hyp = param$hyp, realmean = realmean)
+                 alpha = param$alpha, hyp = param$hyp, realmean = sampledata$realmean)
       
     } else if(param$type == "$${H_A: \\mu > \\mu_0}$$"){
       
-      realmean <- sample(c(as.numeric(param$hyp), as.numeric(param$hyp) + ournulldev), 1)
-      altmorevals <- rnorm(oursamp, realmean, oursd/sqrt(oursamp))
-      sampmean <- mean(altmorevals)
-      sampsd <- sd(altmorevals)
+      sampmean <- mean(sampledata$data)
+      sampsd <- sd(sampledata$data)
       
       tstat <- (sampmean - as.numeric(param$hyp)) / (sampsd / sqrt(oursamp))
       pval <- pt(tstat, oursamp-1, lower.tail = FALSE)
@@ -947,14 +1001,12 @@ server <- function(input, output) {
       
       data.frame(sampmean = sampmean, sampsd = sampsd, tstat = tstat,
                  pval = pval, critval = critval, tpos = tpos, critpos = critpos,
-                 alpha = param$alpha, hyp = param$hyp, realmean = realmean)
+                 alpha = param$alpha, hyp = param$hyp, realmean = sampledata$realmean)
       
     } else{
       
-      realmean <- sample(c(as.numeric(param$hyp), as.numeric(param$hyp) - ournulldev, as.numeric(param$hyp) + ournulldev), 1)
-      altvals <- rnorm(oursamp, realmean, oursd/sqrt(oursamp))
-      sampmean <- mean(altvals)
-      sampsd <- sd(altvals)
+      sampmean <- mean(sampledata$data)
+      sampsd <- sd(sampledata$data)
       
       tstat <- (sampmean - as.numeric(param$hyp)) / (sampsd / sqrt(oursamp))
       if(tstat < 0){
@@ -975,7 +1027,7 @@ server <- function(input, output) {
       data.frame(sampmean = sampmean, sampsd = sampsd, tstat = tstat,
                  pval = pval, critval1 = critval1, critval2 = critval2, 
                  tpos = tpos, critpos1 = critpos1, critpos2 = critpos2,
-                 alpha = param$alpha, hyp = param$hyp, realmean = realmean)
+                 alpha = param$alpha, hyp = param$hyp, realmean = sampledata$realmean)
       
     }
     
