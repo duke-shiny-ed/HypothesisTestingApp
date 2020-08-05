@@ -16,7 +16,7 @@ library(pwr)
 library(grid)
 library(ggtext)
 
-# Define UI for application that draws a histogram
+# Define UI for application 
 ui <- fluidPage(
    
   theme = shinytheme("united"),
@@ -24,8 +24,6 @@ ui <- fluidPage(
   useShinyjs(),
   withMathJax(),
   
-  
-  # ['\\(','\\)']
   tags$script("
 MathJax.Hub.Config({
               tex2jax: {
@@ -35,7 +33,8 @@ MathJax.Hub.Config({
               });"
               ),
   
-  
+
+  # Main title  
   h1("Duke Statistics: Hypothesis Testing", align = "center"),
   
   tags$style(".fullwidth { width: 100% !important; }"),
@@ -43,6 +42,7 @@ MathJax.Hub.Config({
   div(id = "sblay",
   sidebarLayout(
     
+    # Sidebar
     div(id = "Sidebar", sidebarPanel(width = 3,
                                 
                  bsPopover(id = "helpt", "Use this sidebar to select parameters for the scenario. Select a type of test/alternative hypothesis (explained more on Null/Alternative Hypotheses tab), hypothesized value (5 by default), and significance level (available in tabs after Null/Alternative Hypotheses; explained more on Test Statistic/P-Value tab). Press Update Parameters to update the hypothesis test outputs throughout the app, including the text description of the new scenario at the bottom of the sidebar.", trigger = "hover"),
@@ -55,6 +55,8 @@ MathJax.Hub.Config({
                                       }"
                          )
                  ),
+                 
+                 # Select test parameters
               
                  radioButtons("typetest", "Choose a type of alternative hypothesis:",
                               choices = c("$${H_A: \\mu < \\mu_0}$$", "$${H_A: \\mu > \\mu_0}$$", "$${H_A: \\mu \\neq \\mu_0}$$")),
@@ -64,6 +66,9 @@ MathJax.Hub.Config({
                 div(id = "alphachoice", radioButtons("alpha", "Choose a significance level:",
                               choices = c("0.01", "0.05", "0.1"))
                 ),
+                
+                
+                # Update parameters (not sample data)
                  div(id = "firstupdate",
                  fluidRow(
                    
@@ -80,6 +85,7 @@ MathJax.Hub.Config({
                  ),
                 br(),
                 
+                # Re-draw sample data
                 div(id = "updatedata", 
                     fluidRow(
                   
@@ -95,6 +101,8 @@ MathJax.Hub.Config({
                   )
                 ),
                  br(),
+                
+                 # Reactive description of problem scenario
                  h5("Current Description of Scenario:"),
                  uiOutput("reactext"),
                  br(),
@@ -109,6 +117,9 @@ MathJax.Hub.Config({
                  ) # Close sidebarPanel
     ), # close div for sidebarPanel
     
+    
+    
+    # Main tabs
     mainPanel(width = 9,
   
   navbarPage("", id = "tabs",
@@ -117,7 +128,8 @@ MathJax.Hub.Config({
              
              tabPanel("Overview",
                       h2("Our App", align = "center"),
-            
+                      
+                      # Describe hypothesis testing and app overview
                       h4("Welcome to Duke University's hypothesis testing app! Here, you can learn about the crucial aspects of conducting and interpreting a hypothesis test, including setting your hypotheses, calculating a test statistic and p-value, making your conclusions, and navigating types of possible errors in your test."),
                       br(),
                       h4("Often in research and data analysis, we want to investigate certain new claims that challenge what is currently believed, so we take some sample data and see whether or not it supports our new claim. However, as there can be significant variation in sample data, we may not know if the evidence our data provide is because it truly supports our new claim or if it was just the result of random fluctuation in the sample. Hypothesis testing is a reliable way to take sample data and test how strongly its evidence supports our new claim -- if the evidence is strong, we can reject the old beliefs and support the new; if it is weak, we cannot reject the old beliefs. Make sure to check out the running example we'll be using throughout the app and how to change its parameters!"),
@@ -126,6 +138,8 @@ MathJax.Hub.Config({
                       
                       bsPopover("tabov2", "Find extra information here!", trigger = 'hover', placement = 'top'),
                       
+                      
+                      # Describe running example
                       h2("Our Example", align = "center"),
                       h4("There is a commonly used drug to treat flu patients that generally helps them recover within a certain number of days on average. A new drug is being developed by a competing company. The new company believes that flu patients who use their new drug will recover in a different number of days on average than they would with the current drug."),
                       br(),
@@ -141,10 +155,9 @@ MathJax.Hub.Config({
                      
              ),
              
-             # Compare by State
-             
              tabPanel("Null/Alternative Hypotheses",
                       
+                      # Font size/color/alignment edits for mostly text outputs throughout the app (not just for this tab)
                       tags$head(tags$style("#helptext1{
                                           text-align: center
                                            } #helptext2{
@@ -320,11 +333,15 @@ MathJax.Hub.Config({
                       
                       h2("The Null Hypothesis (${H_0}$) and Alternative Hypothesis (${H_A}$)", align = "center"),
                      
+                      
+                      # Plot and plot instructions/description
                       plotOutput("nullaltplot"),
                      
                       p(textOutput("choose1", inline = TRUE), span(textOutput("choosealt", inline = TRUE), style = "color:cornflowerblue; font-size:17px"), textOutput("choose3", inline = TRUE), span(textOutput("choosenull", inline = TRUE), style = "color:cornflowerblue"), textOutput("choose4", inline = TRUE), span(textOutput("tab1blue", inline = TRUE), style = "color:blue; font-size:17px"), textOutput("choose5", inline = TRUE), span(textOutput("tab1red", inline = TRUE), style = "color:red; font-size:17px"), textOutput("choose6", inline = TRUE) ),
                       br(),
                       
+                      
+                      # Null/alt hypotheses introductions and hovers (popovers)
                       textOutput("tab11"),
                       br(),
                       uiOutput("typehyp"),
@@ -336,6 +353,7 @@ MathJax.Hub.Config({
 
                       
                       
+                      # How to interpret a test conclusion
                       textOutput("tab13"),
                       br(),
                       textOutput("tab14"),
@@ -353,6 +371,8 @@ MathJax.Hub.Config({
                       
                       h2("Test Statistic, P-Value, and Alpha", align = "center"),
                     
+                      
+                      # Plot and table of test results
                       fluidRow(
                         column(width = 9,
                                
@@ -383,6 +403,7 @@ MathJax.Hub.Config({
                       p(textOutput("tab281", inline = TRUE), span(textOutput("tab2812", inline = TRUE), style = "color:blue; font-size:17px"), textOutput("tab2813", inline = TRUE), span(textOutput("tab2obsm", inline = TRUE), style = "color:blueviolet; font-size:17px"), textOutput("tab282", inline = TRUE), span(textOutput("tab2rej", inline = TRUE), style = "color:palevioletred; font-size:17px"), textOutput("tab283", inline = TRUE), span(textOutput("tab2ptstat", inline = TRUE), style = "color:blueviolet; font-size:17px"), textOutput("tab2831", inline = TRUE), span(textOutput("tab2pcrit", inline = TRUE), style = "color:palevioletred; font-size:17px"), textOutput("tab2832", inline = TRUE), span(textOutput("tab2ppval", inline = TRUE), style = "color:royalblue; font-size:17px"), textOutput("tab284", inline = TRUE), span(textOutput("tab2palpha", inline = TRUE), style = "color: #E38F8F; font-size:17px"), textOutput("tab285", inline = TRUE) ),
                       br(),
                       
+                      # Introducing test statistic with hover
                       textOutput("tab21"),
                       br(),
                       p(textOutput("tab22", inline = TRUE), span(textOutput("tab2test", inline = TRUE), style = "color:cornflowerblue; font-size:17px"), textOutput("tab23", inline = TRUE) ),
@@ -394,6 +415,7 @@ MathJax.Hub.Config({
                       
                       br(),
                       
+                      # Introducing p-value and significance level with hover
                       p(textOutput("tab24", inline = TRUE), span(textOutput("tab2p", inline = TRUE), style = "color:cornflowerblue; font-size:17px"), uiOutput("tab25", inline = TRUE) ),
                       
                       bsPopover(id = "tab2p", 'The p-value is directly related to the test statistic -- it is the probability of observing a test statistic as or more extreme than the one observed, given that the null hypothesis is true. In other words, it is the probability of seeing data with evidence against the null hypothesis that is as strong or stronger that the data you have seen. A test for a mean with unknown population standard deviation uses the t-distribution to find the p-value, but other types of tests may use the z-distribution, f-distribution, etc.', trigger = 'hover', placement = "top"),
@@ -408,10 +430,7 @@ MathJax.Hub.Config({
                       
                       br(),
 
-                      
-                  
-                      
-                      
+                      # How to make conclusions from test results
                       textOutput("tab29"),
                       br(),
                       textOutput("tab210"),
@@ -433,12 +452,14 @@ MathJax.Hub.Config({
                         tabPanel("Type I Error",
                                  h3("Type I Error", align = "center"),
                                  
+                                 # Type I Error plot
                                  plotOutput("type1plot"),
                                  p(textOutput("tab3I5", inline = TRUE), span(textOutput("tab3I51", inline = TRUE), style = "color:blue; font-size:17px"), textOutput("tab3I52", inline = TRUE), span(textOutput("tab3I53", inline = TRUE), style = "color:red; font-size:17px"), uiOutput("tab3I54", inline = TRUE), span(textOutput("tab3I6", inline = TRUE), style = "color: #E38F8F; font-size:17px"), textOutput("tab3I7", inline = TRUE)),
                                  
                                  
                                  br(),
                                  
+                                 # Type I Error description
                                  p(textOutput("tab3I1", inline = TRUE), span(textOutput("tab3I2", inline = TRUE), style = "color:cornflowerblue; font-size:17px"), textOutput("tab3I3", inline = TRUE)),
                                  
                                  bsPopover(id = "tab3I2", "Type I Error means rejecting the null hypothesis when it is actually true. This is generally regarded as the more serious of the two error types, especially when it could cause potential harm (i.e. the release of an unsafe drug, the use of faulty manufacturing materials, etc.). The researcher generally chooses the chance of a Type I Error that they are willing to accept by choosing a significance level, as shown below.", trigger = 'hover', placement = 'top'),
@@ -459,11 +480,13 @@ MathJax.Hub.Config({
                                  h3("Type II Error", align = "center"),
                                  br(),
                                  
+                                 # Type II Error plot(s)
                                  plotOutput("type2plot"),
                                  plotOutput("type2plot2"),
                                  p(textOutput("tab3II5", inline = TRUE), span(textOutput("tab3IInull", inline = TRUE), style = "color:blue; font-size:17px"), textOutput("tab3IIand", inline = TRUE), span(textOutput("tab3IIalt", inline = TRUE), style = "color:red; font-size:17px"), textOutput("tab3II52", inline = TRUE), span(uiOutput("tab3II53", inline = TRUE), style = "color: #E38F8F; font-size:17px"), textOutput("tab3II54", inline = TRUE), span(uiOutput("tab3II6", inline = TRUE), style = "color: blue; font-size:17px"), textOutput("tab3II7", inline = TRUE)),
                                  br(),
                                  
+                                 # Type II Error description
                                  p(textOutput("tab3II1", inline = TRUE), span(textOutput("tab3II2", inline = TRUE), style = "color:cornflowerblue; font-size:17px"), textOutput("tab3II3", inline = TRUE)),
                                  bsPopover(id = "tab3II2", "Type II Error means failing to reject the null hypothesis when it is false, or concluding that there is no difference from the null hypothesis when a difference does indeed exist. As shown below, P(Type II Error) is the complement of the power of the test, i.e. it is equal to 1 minus the power.", trigger = 'hover', placement = 'top'),
                                  br(),
@@ -484,6 +507,7 @@ MathJax.Hub.Config({
                         tabPanel("Reducing Error",
                                  h3("Reducing Error", align = "center"),
                                  
+                                 # Reducing error explanation
                                  textOutput("tab3r"),
                                  br(),
                                  uiOutput("tab3r2"),
@@ -494,6 +518,7 @@ MathJax.Hub.Config({
                                  textOutput("tab3r4"),
                                  br(),
                                  
+                                 # Sliders to choose sample size and difference of alt mean from null mean, and power/P(Type II Error) outputs
                                  fluidRow(
                                    column(width = 3,
                                           sliderInput("redsampsize", "Sample size:", value = 20, min = 1, max = 150),
@@ -515,13 +540,13 @@ MathJax.Hub.Config({
                                  bsPopover(id = "tab3rII", "<ul><li>Increase power - Since power and Type II Error are inversely related, higher power means lower Type II Error.</li><br><li>Increase sample size - Higher sample size makes it easier to detect when the distribution truly differs from the null hypothesis and is not just showing random variability.</li><br><li>Increase difference from the null to be detected - When the alternative distribution is further away (larger difference) from the null, we will be able to reject the null more often.</li><br><li>Increase significance level - Increasing P(Type I Error) results in more correct rejections of the null, but it also yields more incorrect rejections, so this method should be used with caution.</li></ul>", trigger = 'hover', placement = 'right')
                         )
                         
-                      ) # close tabsetPanel
+                      ) # close tabsetPanel for Type I/Type II/Reduce Error
                       
                       ),
              
              tabPanel("Quiz",
                       
-                      # Title/subtitle
+                      # Review Quiz
                       
                       h2("Wrapping Up with a Review Quiz!", align = "center"),
                       
@@ -541,11 +566,13 @@ MathJax.Hub.Config({
                       fluidRow(
                         column(width = 7,
                                       
+                               # Links to resources
                                h2("Acknowledgements and Further Resources"),
                                uiOutput("resources")
                                       ),
                         column(width = 5,
                                
+                               # Project logo
                                div(img(src = "DukeShinyLogo2.png", height = 265, width = 235), style="text-align: center;")
                                
                                
@@ -553,6 +580,8 @@ MathJax.Hub.Config({
                                
                                
                                ),
+                      
+                      # Concluding footer things
                       br(),
                       br(),
                       br(),
@@ -595,9 +624,11 @@ server <- function(input, output) {
   output$tabov2 <- renderText({ c("cornflower blue")})
   output$tabov3 <- renderText({ c(" for more information!")})
   
-  # Sidebar Text
+  # Sidebar Instruction Text
   output$helpt <- renderText({ c("Hover for Instructions!") })
   
+  
+  # Reactive values for sidebar test parameters, update with observeEvent when Update Parameters is clicked
   param <- reactiveValues(type = "$${H_A: \\mu < \\mu_0}$$",
                           hyp = 5,
                           alpha = 0.01)
@@ -613,6 +644,10 @@ server <- function(input, output) {
     param$alpha <- -300000
     param$alpha <- as.numeric(input$alpha)
   })
+  
+  
+  
+  # Render first part of reactive scenario description, changes based on hypothesis type
   output$reactext <- renderUI({
     if(param$type == "$${H_A: \\mu < \\mu_0}$$"){
     withMathJax(
@@ -630,6 +665,8 @@ server <- function(input, output) {
     }
   })
   
+  
+  # Render null hypothesis (in words) part of reactive scenario description, changes based on hypothesis type
   output$reach0 <- renderUI({
     if(param$type == "$${H_A: \\mu < \\mu_0}$$"){
       withMathJax(
@@ -647,6 +684,8 @@ server <- function(input, output) {
     }
   })
   
+  
+  # Render null hypothesis (in mathematical notation) part of reactive scenario description, changes based on hypothesis type
   output$reach01 <- renderUI({
     
     if(param$type == "$${H_A: \\mu < \\mu_0}$$"){
@@ -666,6 +705,8 @@ server <- function(input, output) {
     
   })
   
+  
+  # Render alternative hypothesis (in words) part of reactive scenario description, changes based on hypothesis type
   output$reacha <- renderUI({
     if(param$type == "$${H_A: \\mu < \\mu_0}$$"){
       withMathJax(
@@ -683,6 +724,8 @@ server <- function(input, output) {
     }
   })
   
+  
+  # Render alternative hypothesis (in mathematical notation) part of reactive scenario description, changes based on hypothesis type
   output$reacha1 <- renderUI({
     
     if(param$type == "$${H_A: \\mu < \\mu_0}$$"){
@@ -703,6 +746,7 @@ server <- function(input, output) {
     
   })
   
+  # Render significance level part of reactive scenario description
   output$reacalpha <- renderUI({
 
       withMathJax(
@@ -729,7 +773,7 @@ server <- function(input, output) {
   output$tab15 <- renderText({ c("Neither hypothesis is definitely proved, confirmed, or disproved -- the test will only tell us which conclusion this dataset supports.")})
   
   
-  # Text for Test Statistic/P-Value Tab
+  # Text for Test Statistic/P-Value Tab (Explanatory, about test statistic/p-value/alpha level/critical value)
   output$tab21 <- renderText({ c("When performing the hypothesis test, the calculations below are done with the assumption that the null distribution is the true distribution.")})
   output$tab22 <- renderText({ c("In a hypothesis test for a mean, the formula for the ")})
   output$tab2test <- renderText({ c("test statistic")})
@@ -745,7 +789,7 @@ server <- function(input, output) {
   output$tab2c <- renderText({ c("critical value")})
   output$tab28 <- renderText({ c(" from the t-distribution, which is analogous to the test statistic -- it is the point where the probability of seeing a value as or more extreme is equal to the significance level.")})
   
-  
+  # Text for Test Statistic/P-Value Tab (Description of plot)
   output$tab281 <- renderText({ c("Above is a plot of the ")})
   output$tab2812 <- renderText({ c("null distribution")})
   output$tab2813 <- renderText({ c(" with the ")})
@@ -761,13 +805,15 @@ server <- function(input, output) {
   output$tab284 <- renderText({ c(" and ")})
   output$tab2palpha <- renderText({ c("alpha (${\\alpha}$)")})
   output$tab285 <- renderText({ c(" shaded in. We can make a conclusion based on our randomly simulated data, with parameters from the sidebar.")})
+  
+  # Text for Test Statistic/P-Value Tab (How to make conclusions)
   output$tab29 <- renderText({ c("Making Conclusions")})
   output$tab210 <- renderText({ c("To make a conclusion for our hypothesis test, we can either use the p-value and compare it to the significance level, or we can use the test statistic and compare it to the critical value. For any given hypothesis test, both methods will yield the same conclusion. The decision rules are as follows:")})
   output$concrules <- renderUI(withMathJax(HTML("<ul><li>If the p-value is <b>less than</b> ${\\alpha}$ or the absolute value of the test statistic is <strong>greater than</strong> the critical value, <strong>reject</strong> ${H_0}$ in favor of ${H_A}$.</li><li>If the p-value is <strong>greater than</strong> ${\\alpha}$ or the absolute value of the test statistic is <strong>less than</strong> the critical value, <strong>fail to reject</strong> ${H_0}$ in favor of ${H_A}$.</li></ul>")))
   output$tab211 <- renderText({ c("For practical interpretations of these conclusions, see the Null and Alternative Hypotheses tab.")})
   
   
-  # Hige sidebar on Overview and Review Quiz tabs, and hide alpha choice on Null/Alt tab
+  # Hide sidebar on Overview/Review Quiz/Resources tabs, and hide alpha choice on Null/Alt tab
    observeEvent(input$tabs, {
      if(input$tabs == "Overview" || input$tabs == "Quiz" || input$tabs == "Resources"){
          shinyjs::hide(id = "Sidebar")
@@ -781,7 +827,7 @@ server <- function(input, output) {
          }
    })
   
-  # Ensure that mainPanel expands to full screen when sidebar is hidden in Overview/Review Quiz tabs
+  # Ensure that mainPanel expands to full screen when sidebar is hidden in Overview/Review Quiz/Resources tabs
   observe({
     if (input$tabs %in% c("Type I/Type II Errors", "Test Statistic/P-Value", "Null/Alternative Hypotheses")) {
       shinyjs::show(select = "#sblay > div > div:nth-child(1)")
@@ -795,6 +841,7 @@ server <- function(input, output) {
     
   })
   
+  # Need second plot on Type II Error tab when alternative hypothesis is !=
   observe({
     if (param$type == "$${H_A: \\mu \\neq \\mu_0}$$") {
       shinyjs::show(id = "type2plot2")
@@ -805,6 +852,8 @@ server <- function(input, output) {
     
   })
   
+  
+  # Allow a choice to update data (re-sample the data) on Test Statistic/P-Value page (only needed for this tab, since it's the only tab dependent on the actual sample rather than just the test parameters)
   observeEvent(input$tabs, {
     if(input$tabs == "Test Statistic/P-Value"){
       shinyjs::show(id = "updatedata")
@@ -815,7 +864,7 @@ server <- function(input, output) {
     }
   })
   
-  
+  # Plot theme
   theme_bluewhite <- function (base_size = 11, base_family = "") {
     theme_bw() %+replace% 
       theme(
@@ -829,35 +878,48 @@ server <- function(input, output) {
       )
   }
   
+  # Set standard deviation, sample size, and difference between alternative/null means
   oursd <- 2
   oursamp <- 20
   ournulldev <- 2
   
+  # Sample values for t-distribution plot
   tvals <- rt(1000, oursamp-1)
   tdens <- dt(tvals, oursamp-1)
-  
   tdist <- data.frame(tvals = tvals, tdens = tdens)
   
+  # Create initial null distribution values (initial hypothesized value is set to 5 in the app)
+  # Note: using standard error rather than standard deviation, due to sampling?
   nullvals <- rnorm(1000, 5, oursd/sqrt(oursamp))
   nulldens <- dnorm(nullvals, 5, oursd/sqrt(oursamp))
   nulldistlite <- data.frame(vals = nullvals, dens = nulldens)
   
+  # Create initial alternative (<) distribution values (initial hypothesized value is set to 5 in the app)
+  # Note: using standard error rather than standard deviation, due to sampling?
   altlessvals <- rnorm(1000, 5 - ournulldev, oursd/sqrt(oursamp))
   altlessdens <- dnorm(altlessvals, 5 - ournulldev, oursd/sqrt(oursamp))
   altlessdistlite <- data.frame(vals = altlessvals, dens = altlessdens)
   
+  # Create initial alternative (>) distribution values (initial hypothesized value is set to 5 in the app)
+  # Note: using standard error rather than standard deviation, due to sampling?
   altmorevals <- rnorm(1000, 5 + ournulldev, oursd/sqrt(oursamp))
   altmoredens <- dnorm(altmorevals, 5 + ournulldev, oursd/sqrt(oursamp))
   altmoredistlite <- data.frame(vals = altmorevals, dens = altmoredens)
   
+  # Create initial dataset of null and alternative values
   plotdatalite <- data.frame(nullvals = nulldistlite$vals, nulldens = nulldistlite$dens, altlessvals = altlessdistlite$vals, altlessdens = altlessdistlite$dens, altmorevals = altmoredistlite$vals, altmoredens = altmoredistlite$dens)
   
+  
+  # Create REACTIVE null distribution values, to be used when user updates the sidebar parameters 
+  # Note: using standard error rather than standard deviation, due to sampling?
   nulldist <- eventReactive(input$update, {
     nullvals <- rnorm(1000, as.numeric(input$hypval), oursd/sqrt(oursamp))
     nulldens <- dnorm(nullvals, as.numeric(input$hypval), oursd/sqrt(oursamp))
     data.frame(vals = nullvals, dens = nulldens)
   })
   
+  # Create REACTIVE alternative (<) distribution values, to be used when user updates the sidebar parameters 
+  # Note: using standard error rather than standard deviation, due to sampling?
   altlessdist <- eventReactive(input$update, {
     
       altlessvals <- rnorm(1000, (as.numeric(input$hypval) - ournulldev), oursd/sqrt(oursamp))
@@ -866,6 +928,8 @@ server <- function(input, output) {
     
   })
   
+  # Create REACTIVE alternative (>) distribution values, to be used when user updates the sidebar parameters 
+  # Note: using standard error rather than standard deviation, due to sampling?
   altmoredist <- eventReactive(input$update, {
     
       altmorevals <- rnorm(1000, (as.numeric(input$hypval) + ournulldev), oursd/sqrt(oursamp))
@@ -874,14 +938,20 @@ server <- function(input, output) {
     
   })
   
+  # Create REACTIVE dataset of null and alternative values
   plotdata <- reactive({
     data.frame(nullvals = nulldist()$vals, nulldens = nulldist()$dens, altlessvals = altlessdist()$vals, altlessdens = altlessdist()$dens, altmorevals = altmoredist()$vals, altmoredens = altmoredist()$dens)
   })
 
+  # Render plot on Null/Alt Hypotheses tab
   output$nullaltplot <- renderPlot({
     
+    
+    # First plot to be created when app is opened, before user has changed anything in the sidebar
     if(input$update[1] == 0){
       
+      # Initial parameters are hypothesized_value = 5 and alternative = < (less than)
+      # Doing sampling for initial parameters, could also just use nulldistlite and altlessdistlite from above 
       nullvals <- rnorm(1000, 5, oursd/sqrt(oursamp))
       nulldens <- dnorm(nullvals, 5, oursd/sqrt(oursamp))
       nulldist <- data.frame(vals = nullvals, dens = nulldens)
@@ -892,6 +962,8 @@ server <- function(input, output) {
       
       plotdata1 <- data.frame(nullvals = nulldist$vals, nulldens = nulldist$dens, altlessvals = altlessdist$vals, altlessdens = altlessdist$dens)
       
+      
+      # Make initial plot
       ggplot(data = plotdata1, aes(x = nullvals, y = nulldens)) +
         geom_line(col = "blue", size = 1.5) +
         geom_line(data = plotdata1, aes(x = altlessvals, y = altlessdens), col = "red", linetype = "dashed") +
@@ -901,6 +973,8 @@ server <- function(input, output) {
         theme(axis.text.y = element_blank(),
               plot.title = element_markdown(lineheight = 1.1)) 
    
+      
+      # Make plot using reactive distribution values (in plotdata()) when user has updated the sidebar and alternative is < (less than)
        } else if(isolate({input$typetest == "$${H_A: \\mu < \\mu_0}$$"})){
 
        ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
@@ -912,6 +986,8 @@ server <- function(input, output) {
           theme(axis.text.y = element_blank(),
                 plot.title = element_markdown(lineheight = 1.1))
 
+         
+      # Make plot using reactive distribution values (in plotdata()) when user has updated the sidebar and alternative is > (greater than)
       } else if(isolate({input$typetest == "$${H_A: \\mu > \\mu_0}$$"})){
 
         ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
@@ -923,8 +999,11 @@ server <- function(input, output) {
           theme(axis.text.y = element_blank(),
                 plot.title = element_markdown(lineheight = 1.1)) 
 
+        
+      # Make plot using reactive distribution values (in plotdata()) when user has updated the sidebar and alternative is != (not equal to)
       } else{
         
+        # Create note to mention that although two alt. distributions are plotted, these are only two possibilities -- only one or the other (or a different (singular) bell curve) is the alternative
         grob <- grobTree(textGrob("With a two-sided test, \n we are hypothesizing that \n the alternative distribution \n could be EITHER above \n OR below the null \n distribution, not both -- \n these are just \n two possibilities.", x=0.03,  y=0.8, hjust=0,
                                   gp=gpar(col="darkred", fontsize=11, fontface="italic")))
         
@@ -944,24 +1023,29 @@ server <- function(input, output) {
   
   # Test Statistic and P-Value tab
   
+  # Create reactive sample data that only updates when Re-Simulate Data is clicked
   sampledata <- reactiveValues(data = rnorm(oursamp, 5, oursd/sqrt(oursamp)),
                                realmean = 5)
   
+  # When Re-Simulate Data is clicked, we randomly choose a true population mean based on which alternative hypothesis is chosen, and save the new sample data and true mean
   observeEvent(input$updatedat, {
     
+    # If alternative is < (less than), choose between hypothesized value and a value less than hypothesized value for true mean
     if(param$type == "$${H_A: \\mu < \\mu_0}$$"){
       
       realmean <- sample(c(as.numeric(param$hyp), as.numeric(param$hyp) - ournulldev), 1)
       sampledata$data <- rnorm(oursamp, realmean, oursd/sqrt(oursamp))
       sampledata$realmean = realmean
       
-      
+    # If alternative is > (greater than), choose between hypothesized value and a value more than hypothesized value for true mean
     } else if(param$type == "$${H_A: \\mu > \\mu_0}$$"){
       
       realmean <- sample(c(as.numeric(param$hyp), as.numeric(param$hyp) + ournulldev), 1)
       sampledata$data <- rnorm(oursamp, realmean, oursd/sqrt(oursamp))
       sampledata$realmean = realmean
       
+      
+    # If alternative is != (not equal to), choose between hypothesized value, a value less than hypothesized value, and a value more than hypothesized value for true mean
     } else{
       
       realmean <- sample(c(as.numeric(param$hyp), as.numeric(param$hyp) - ournulldev, as.numeric(param$hyp) + ournulldev), 1)
@@ -972,12 +1056,15 @@ server <- function(input, output) {
     
   })
   
+  # Create reactive results that respond to updates in both the test parameters and the sample data
   results <- reactive({
     if(param$type == "$${H_A: \\mu < \\mu_0}$$"){
       
+      # Take mean and standard deviation of sample data
       sampmean <- mean(sampledata$data)
       sampsd <- sd(sampledata$data)
       
+      # Calculate test statistic, p-value, critical value
       tstat <- (sampmean - as.numeric(param$hyp)) / (sampsd / sqrt(oursamp))
       pval <- pt(tstat, oursamp-1)
       critval <- qt(as.numeric(param$alpha), oursamp-1)
@@ -990,9 +1077,11 @@ server <- function(input, output) {
       
     } else if(param$type == "$${H_A: \\mu > \\mu_0}$$"){
       
+      # Take mean and standard deviation of sample data 
       sampmean <- mean(sampledata$data)
       sampsd <- sd(sampledata$data)
       
+      # Calculate test statistic, critical value, p-value
       tstat <- (sampmean - as.numeric(param$hyp)) / (sampsd / sqrt(oursamp))
       pval <- pt(tstat, oursamp-1, lower.tail = FALSE)
       critval <- qt(as.numeric(param$alpha), oursamp-1, lower.tail = FALSE)
@@ -1005,17 +1094,30 @@ server <- function(input, output) {
       
     } else{
       
+      # (Slightly different procedure for when alternative is != (not equal to))
+      
+      # Take mean and standard deviation of sample data
       sampmean <- mean(sampledata$data)
       sampsd <- sd(sampledata$data)
       
+      # Calculate test statistic
       tstat <- (sampmean - as.numeric(param$hyp)) / (sampsd / sqrt(oursamp))
-      if(tstat < 0){
+     
+      # Calculate area below test statistic for p-value if test statistic is negative
+       if(tstat < 0){
         pval <- pt(tstat, oursamp-1)
+        
       } else{
+        # Calculate area above test statistic for p-value if test statistic is positive
         pval <- pt(tstat, oursamp-1, lower.tail = FALSE)
       }
+      
+      
+      # Calculate the two critical values
       critval1 <- qt(as.numeric(param$alpha)/2, oursamp-1)
       critval2 <- qt(as.numeric(param$alpha)/2, oursamp-1, lower.tail = FALSE)
+      
+      # Calculate positions of test statistic and critical values on null distribution, for later use
       if(tstat < 0){
         tpos <- qnorm(pval, as.numeric(param$hyp), oursd/sqrt(oursamp))
       } else{
@@ -1032,17 +1134,23 @@ server <- function(input, output) {
     }
     
   })
+  
+  
+    # Render Results table
     output$results <- renderText({ c("Results")})
     
     output$resultvals <- renderTable({
       
       if(param$type == "$${H_A: \\mu \\neq \\mu_0}$$"){
         
+        # Select and display sample mean/standard deviation, test statistic, p-value, critical values, and alpha for two-sided test
+        
         res_table <- results() %>% select(sampmean, sampsd, tstat, pval, critval1, critval2, alpha)
         res_table$sampsize <- oursamp
         
         varnames <- c("Sample Size $n$:", "Observed Mean $\\bar{x}$:", "Sample SD $s$:", "Test Statistic:", "P-Value:", "Critical Values:", "$\\alpha$:")
         
+        # Check if rounding of p-value is needed
         if(as.numeric(res_table$pval) >= 0.0001){
         
           varvals <- c(paste("$", round(res_table$sampsize, 0), "$"), paste("$", round(res_table$sampmean, 4), "$"), paste("$", round(res_table$sampsd, 4), "$"), paste("$", round(res_table$tstat, 4), "$"), paste("$", round(res_table$pval, 4), "$"), paste("$", round(res_table$critval1, 4), "$ and $", round(res_table$critval2, 4), "$"), paste("$", res_table$alpha, "$"))
@@ -1053,15 +1161,19 @@ server <- function(input, output) {
             
         }
         
+        # Create table to be displayed
         data.frame(Result = varnames, Value = varvals)
         
       } else{
+        
+        # Select and display sample mean/standard deviation, test statistic, p-value, critical value, and alpha for one-sided test
         
         res_table <- results() %>% select(sampmean, sampsd, tstat, pval, critval, alpha)
         res_table$sampsize <- oursamp
         
         varnames <- c("Sample Size $n$:", "Observed Mean $\\bar{x}$:", "Sample SD $s$:", "Test Statistic:", "P-Value:", "Critical Value:", "$\\alpha$:")
         
+        # Check if rounding of p-value is needed
         if(as.numeric(res_table$pval) >= 0.0001){
           
           varvals <- c(paste("$", round(res_table$sampsize, 0), "$"), paste("$", round(res_table$sampmean, 4), "$"), paste("$", round(res_table$sampsd, 4), "$"), paste("$", round(res_table$tstat, 4), "$"), paste("$", round(res_table$pval, 4), "$"), paste("$", round(res_table$critval, 4), "$"), paste("$", res_table$alpha, "$"))
@@ -1072,6 +1184,7 @@ server <- function(input, output) {
           
         }
         
+        # Create table to be displayed
         data.frame(Result = varnames, Value = varvals)
         
         
@@ -1082,8 +1195,10 @@ server <- function(input, output) {
     })
     
     
+    # Render test conclusion
     output$conclusion <- renderUI({
       
+      # Conclusion for != test is compared to p-value divided by 2
       if(param$type == "$${H_A: \\mu \\neq \\mu_0}$$"){
         
         if(as.numeric(results()$pval) < (as.numeric(results()$alpha) / 2)){
@@ -1093,6 +1208,7 @@ server <- function(input, output) {
         }
         
         
+      # Conclusions for < or > tests are compared to p-value
       } else{
       
       if(as.numeric(results()$pval) < as.numeric(results()$alpha)){
@@ -1103,10 +1219,14 @@ server <- function(input, output) {
    }
     })
     
+    # Output the true mean chosen by the random simulation, for exploration purposes (can't know this value in real life)
     output$answer2 <- renderText({ paste("(True mean, chosen by simulation: ${\\mu = ", results()$realmean, "}$)")})
 
+    # Render plot of results
     output$tstatplot <- renderPlot({
       
+      
+      # Create initial plot before user has changed anything in the sidebar, using nulldistlite from above
       if(input$update[1] == 0){
    
         ggplot(data = nulldistlite, aes(x = vals, y = dens)) +
@@ -1123,6 +1243,7 @@ server <- function(input, output) {
           geom_text(aes(x=results()$critpos, label="rejection region", y=0.35, size = 20), colour="palevioletred", angle=90, vjust = -1, size = 7)
         
         
+      # Create reactive plot for when user has changed parameters and alternative is < (less than)
       } else if(isolate({input$typetest == "$${H_A: \\mu < \\mu_0}$$"})){
         
         ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
@@ -1138,6 +1259,9 @@ server <- function(input, output) {
           geom_text(aes(x=results()$tpos, label="observed mean", y=0.69), colour="blueviolet", angle=90, vjust = 1, size = 7)+
           geom_text(aes(x=results()$critpos, label="rejection region", y=0.35, size = 20), colour="palevioletred", angle=90, vjust = -1, size = 7)
         
+        
+        
+      # Create reactive plot for when user has changed parameters and alternative is > (greater than)
       } else if(isolate({input$typetest == "$${H_A: \\mu > \\mu_0}$$"})){
         
         ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
@@ -1153,8 +1277,10 @@ server <- function(input, output) {
           geom_text(aes(x=results()$tpos, label="observed mean", y=0.69), colour="blueviolet", angle=90, vjust = -1, size = 7)+
           geom_text(aes(x=results()$critpos, label="rejection region", y=0.35, size = 20), colour="palevioletred", angle=90, vjust = 1, size = 7)
         
+      # Create reactive plot for when user has changed parameters and alternative is != (not equal to)
       } else{
         
+        # If test statistic is above mean, adjust shading direction
         if(results()$tstat > 0){
         
         ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
@@ -1173,6 +1299,7 @@ server <- function(input, output) {
           geom_text(aes(x=results()$critpos1, label="rejection region", y=0.35, size = 20), colour="palevioletred", angle=90, vjust = -1, size = 7) +
           geom_text(aes(x=results()$critpos2, label="rejection region", y=0.35, size = 20), colour="palevioletred", angle=90, vjust = 1, size = 7)
         
+        # If test statistic is below mean, adjust shading direction
         } else {
           
           ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
@@ -1198,8 +1325,11 @@ server <- function(input, output) {
       }
     })
     
+    
+    # Render t-distribution plot
     output$tdistplot <- renderPlot({
-      
+
+      # Create reactive plot for when user has changed parameters and alternative is < (less than)
       if(isolate({input$typetest == "$${H_A: \\mu < \\mu_0}$$"})){
         
         ggplot(data = tdist, aes(x = tvals, y = tdens)) +
@@ -1215,7 +1345,7 @@ server <- function(input, output) {
           geom_text(aes(x=results()$tstat, label="test statistic", y=0.3), colour="blueviolet", angle=90, vjust = 1, size = 7)+
           geom_text(aes(x=results()$critval, label="critical value", y=0.27, size = 20), colour="palevioletred", angle=90, vjust = -1, size = 7) 
           
-      
+      # Create reactive plot for when user has changed parameters and alternative is > (greater than)
       } else if(isolate({input$typetest == "$${H_A: \\mu > \\mu_0}$$"})){
         
         ggplot(data = tdist, aes(x = tvals, y = tdens)) +
@@ -1231,9 +1361,10 @@ server <- function(input, output) {
           geom_text(aes(x=results()$tstat, label="test statistic", y=0.3), colour="blueviolet", angle=90, vjust = -1, size = 7)+
           geom_text(aes(x=results()$critval, label="critical value", y=0.27, size = 20), colour="palevioletred", angle=90, vjust = 1, size = 7) 
         
-        
+      # Create reactive plot for when user has changed parameters and alternative is != (not equal to)
       } else {
-        
+      
+        # If test statistic is above mean, adjust shading direction
         if(results()$tstat > 0){
           
           ggplot(data = tdist, aes(x = tvals, y = tdens)) +
@@ -1251,7 +1382,8 @@ server <- function(input, output) {
             geom_text(aes(x=results()$tstat, label="test statistic", y=0.3), colour="blueviolet", angle=90, vjust = -1, size = 7)+
             geom_text(aes(x=results()$critval1, label="critical value", y=0.27, size = 20), colour="palevioletred", angle=90, vjust = -1, size = 7) +
             geom_text(aes(x=results()$critval2, label="critical value", y=0.27, size = 20), colour="palevioletred", angle=90, vjust = 1, size = 7)
-          
+        
+        # If test statistic is below mean, adjust shading direction
         } else{
           
           ggplot(data = tdist, aes(x = tvals, y = tdens)) +
@@ -1282,6 +1414,7 @@ server <- function(input, output) {
       
        # Type I Sub-Tab
     
+      # Informative text about Type I Error
       output$tab3I1 <- renderText({ c("When performing a hypothesis test, there is always a possibility for an erroneous result. Although we would like to be fairly confident in our conclusions, there is always chance due to random sampling, and this will occasionally lead us to make incorrect decisions. The first kind of error is called ")})
       output$tab3I2 <- renderText({ c("Type I Error")})
       output$tab3I3 <- renderText({ c(", where we reject the null hypothesis when it is actually true.")})
@@ -1294,10 +1427,11 @@ server <- function(input, output) {
       output$tab3I6 <- renderText({c("light red")})
       output$tab3I7 <- renderText({c(") changes.")})
       
+      
+      # Render Type I Error plot
       output$type1plot <- renderPlot({
         
-        
-        
+        # Create initial plot before the user has updated any parameters, useing plotdatalite from above
         if(input$update[1] == 0){
 
           ggplot(data = plotdatalite, aes(x = nullvals, y = nulldens)) +
@@ -1312,6 +1446,7 @@ server <- function(input, output) {
             geom_text(aes(x=results()$critpos, label="rejection threshold", y=0.6, size = 20), colour= "black", angle=90, vjust = -1, size = 7)
 
           
+        # Create reactive plot for when user has changed parameters and alternative is < (less than)
         } else if(isolate({input$typetest == "$${H_A: \\mu < \\mu_0}$$"})){
           
           ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
@@ -1324,7 +1459,9 @@ server <- function(input, output) {
             geom_area(data = subset(plotdata(), nullvals < results()$critpos), colour = "red", fill = "red", alpha = 0.4) +
             geom_vline(xintercept = results()$critpos, color = "palevioletred", size = 1.5) +
             geom_text(aes(x=results()$critpos, label="rejection threshold", y=0.6, size = 20), colour= "black", angle=90, vjust = -1, size = 7)
+        
           
+        # Create reactive plot for when user has changed parameters and alternative is > (greater than)
         } else if(isolate({input$typetest == "$${H_A: \\mu > \\mu_0}$$"})){
           
           ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
@@ -1337,7 +1474,8 @@ server <- function(input, output) {
             geom_area(data = subset(plotdata(), nullvals > results()$critpos), colour = "red", fill = "red", alpha = 0.4) +
             geom_vline(xintercept = results()$critpos, color = "palevioletred", size = 1.5) +
             geom_text(aes(x=results()$critpos, label="rejection threshold", y=0.6, size = 20), colour= "black", angle=90, vjust = -1, size = 7)
-          
+        
+        # Create reactive plot for when user has changed parameters and alternative is != (not equal to)
         } else{
           
           ggplot(data = plotdata(), aes(x = nullvals, y = nulldens)) +
@@ -1364,6 +1502,7 @@ server <- function(input, output) {
       
       # Type II Sub-Tab
 
+      # Informative text about Type II Error
       output$tab3II1 <- renderText({ c("In addition to Type I Error, there is another kind of error called ")})
       output$tab3II2 <- renderText({ c("Type II Error")})
       output$tab3II3 <- renderText({ c(", where we fail to reject the null hypothesis when it is actually false.")})
@@ -1380,10 +1519,10 @@ server <- function(input, output) {
       output$tab3II6 <- renderUI({ withMathJax(c("power ($1-\\beta$)"))})
       output$tab3II7 <- renderText({ c("appear on the plot.")})
       
+      # Render Type II Error plot
       output$type2plot <- renderPlot({
-        
-        
-        
+ 
+        # Create initial plot before the user has updated any parameters, useing plotdatalite from above
         if(input$update[1] == 0){
           
           ggplot(data = plotdatalite, aes(x = altlessvals, y = altlessdens)) +
@@ -1399,8 +1538,7 @@ server <- function(input, output) {
             geom_text(aes(x=results()$critpos, label="rejection threshold", y=0.6, size = 20), colour= "black", angle=90, vjust = -1, size = 7)
           
             
-          
-          
+        # Create reactive plot for when user has changed parameters and alternative is < (less than)
         } else if(isolate({input$typetest == "$${H_A: \\mu < \\mu_0}$$"})){
           
           ggplot(data = plotdata(), aes(x = altlessvals, y = altlessdens)) +
@@ -1414,7 +1552,8 @@ server <- function(input, output) {
             geom_area(data = subset(plotdata(), altlessvals < results()$critpos), colour = "blue", fill = "blue", alpha = 0.4) +
             geom_vline(xintercept = results()$critpos, color = "palevioletred", size = 1.5) +
             geom_text(aes(x=results()$critpos, label="rejection threshold", y=0.6, size = 20), colour="black", angle=90, vjust = -1, size = 7)
-          
+        
+        # Create reactive plot for when user has changed parameters and alternative is > (greater than)
         } else if(isolate({input$typetest == "$${H_A: \\mu > \\mu_0}$$"})){
           
           ggplot(data = plotdata(), aes(x = altmorevals, y = altmoredens)) +
@@ -1428,9 +1567,11 @@ server <- function(input, output) {
             geom_area(data = subset(plotdata(), altmorevals > results()$critpos), colour = "blue", fill = "blue", alpha = 0.4) +
             geom_vline(xintercept = results()$critpos, color = "palevioletred", size = 1.5) +
             geom_text(aes(x=results()$critpos, label="rejection threshold", y=0.6, size = 20), colour="black", angle=90, vjust = -1, size = 7)
-          
+
+        # Create reactive plot for when user has changed parameters and alternative is != (not equal to)
         } else{
           
+          # Create note about using two plots to represent Type II Error for two-sided test
           grob <- grobTree(textGrob("For a two-sided test, there are two \n possibilities for the alternative \n distribution: less than or greater than \n the null distribution. This plot shows \n less than; see the plot below for \n greater than.", x=0.01,  y=0.80, hjust=0,
                                     gp=gpar(col="darkred", fontsize=11, fontface="italic")))
           
@@ -1454,8 +1595,10 @@ server <- function(input, output) {
         
       })
       
+      # Creating second Type II Error plot if alternative is != (not equal to)
       output$type2plot2 <- renderPlot({
         
+        # Just a way to check if it is two-sided, there are two critical values so `critpos1` will be a variable in results dataframe
         if("critpos1" %in% names(results())){
           
           ggplot(data = plotdata(), aes(x = altmorevals, y = altmoredens)) +
@@ -1477,14 +1620,17 @@ server <- function(input, output) {
       
       # Reducing Error sub-tab
       
-      
+      # Informative text about reducing error
       output$tab3r <- renderText({ c("When performing a hypothesis test, we generally want to reduce the probability of error as much as possible. There are several ways to reduce error.")})
       output$tab3r2 <- renderUI({ withMathJax(c("For Type I Error, the main way to reduce its probability is to choose a lower $\\alpha$, as this value can generally be fixed by the researcher."))})
       output$tab3r3 <- renderText({ c("As you can see, there are multiple methods to ")})
       output$tab3rII <- renderText({ c("reduce Type II Error.")})
       output$tab3r4 <- renderText({ c("What about Type II Error? Using your parameters from the sidebar and the sliders below, adjust the values to see how P(Type II Error) changes.")})
+      
+      # Calculating power using sliders for sample size and difference of alternative mean from null mean
       output$redpower <- renderUI({
         
+        # Calculate power for alternative of < (less than)
         if(isolate({input$typetest == "$${H_A: \\mu < \\mu_0}$$"})){
           
           test <- pwr.t.test(d = -as.numeric(input$redmindev)/(oursd), n = as.numeric(input$redsampsize), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "less")
@@ -1493,6 +1639,7 @@ server <- function(input, output) {
           
           withMathJax(paste("Power, or $1 - \\beta$: ", round(power, 5)))
           
+        # Calculate power for alternative of > (greater than)
         } else if(isolate({input$typetest == "$${H_A: \\mu > \\mu_0}$$"})){ 
         
           test <- pwr.t.test(d = as.numeric(input$redmindev)/(oursd), n = as.numeric(input$redsampsize), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "greater")
@@ -1501,6 +1648,7 @@ server <- function(input, output) {
           
           withMathJax(paste("Power, or $1 - \\beta$: ", round(power, 5)))
         
+        # Calculate power for alternative of != (not equal to)
         } else{
           
           test <- pwr.t.test(d = as.numeric(input$redmindev)/(oursd), n = as.numeric(input$redsampsize), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "two.sided")
@@ -1514,8 +1662,11 @@ server <- function(input, output) {
         
       })
       
+      
+      # Calculating P(Type II Error) using sliders for sample size and difference of alternative mean from null mean
       output$redbeta <- renderUI({
-        
+
+        # Calculate power for alternative of < (less than)
         if(isolate({input$typetest == "$${H_A: \\mu < \\mu_0}$$"})){
           
           test <- pwr.t.test(d = -as.numeric(input$redmindev)/(oursd), n = as.numeric(input$redsampsize), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "less")
@@ -1523,7 +1674,8 @@ server <- function(input, output) {
           power <- round(test$power, 5)
           
           withMathJax(paste("P(Type II Error), or $\\beta$: ", round(1-power, 5)))
-          
+         
+        # Calculate power for alternative of > (greater than) 
         } else if(isolate({input$typetest == "$${H_A: \\mu > \\mu_0}$$"})){ 
           
           test <- pwr.t.test(d = as.numeric(input$redmindev)/(oursd), n = as.numeric(input$redsampsize), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "greater")
@@ -1531,7 +1683,8 @@ server <- function(input, output) {
           power <- round(test$power, 5)
           
           withMathJax(paste("P(Type II Error), or $\\beta$: ", round(1-power, 5)))
-          
+        
+        # Calculate power for alternative of != (not equal to)  
         } else{
           
           test <- pwr.t.test(d = as.numeric(input$redmindev)/(oursd), n = as.numeric(input$redsampsize), sig.level = as.numeric(results()$alpha), type = "one.sample", alternative = "two.sided")
@@ -1545,7 +1698,7 @@ server <- function(input, output) {
         
       })
       
-      #Further Resources
+      # Further Resources
       
       output$resources <- renderUI(HTML('<ul><li><i>OpenIntro Statistics</i> by Christopher Barr, David M. Diez, and Mine Cetinkaya-Rundel: Section 5</li><li><em>Probability and Statistics for Engineering and the Sciences</em> by Jay Devore: Chapter 8</li><li><a href = "https://statisticsbyjim.com/hypothesis-testing/types-errors-hypothesis-testing/">Types of Errors in Hypothesis Testing</a> by Jim Frost</li><li><a href = "https://online.stat.psu.edu/statprogram/reviews/statistical-concepts/hypothesis-testing/critical-value-approach">S.3.1 Hypothesis Testing (Critical Value Approach)</a></li><li><a href = "https://support.minitab.com/en-us/minitab-express/1/help-and-how-to/basic-statistics/inference/supporting-topics/basics/what-is-a-test-statistic/#:~:text=A%20test%20statistic%20is%20a,expected%20under%20the%20null%20hypothesis.">What is a test statistic?</a></li><li><a href = "https://online.stat.psu.edu/statprogram/reviews/statistical-concepts/proportions">S.6 Hypothesis Test of Proportion</a></li><li><a href = "http://www.statskingdom.com/130MeanT1.html">One-Sample T-Test (T Distribution) Calculator</a></li></ul>'))
       
