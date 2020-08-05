@@ -150,7 +150,7 @@ MathJax.Hub.Config({
                       br(),
                       h4("You can test these hypotheses (and find explanations of the hypotheses themselves) in the following tabs. You can also use the sidebar on the tabs to change the parameters and randomly simulate new data -- you can choose the type of test, the hypothesized value, and the level of significance to see how these affect the test and your conclusions."),
                       br(),
-                      h6("Created by Abbey List for the ShinyEd project at Duke University, Summer 2020. Hosted by the Duke University Statistical Science Department.", align = "center")
+                      h6("This app was developed by Abbey List as part of the Summer 2020 Duke Shiny Ed program.", align = "center")
                       
                      
              ),
@@ -600,7 +600,7 @@ MathJax.Hub.Config({
                       br(),
                       br(),
                       br(),
-                      h6("Created by Abbey List for the ShinyEd project at Duke University, Summer 2020. Hosted by the Duke University Statistical Science Department.", align = "center")
+                      h6("This app was developed by Abbey List as part of the Summer 2020 Duke Shiny Ed program.", align = "center")
                       
                       
                       
