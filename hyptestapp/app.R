@@ -148,7 +148,8 @@ MathJax.Hub.Config({
                       div(id = "helptext1", helpText("Null hypothesis: Patient recovery time is equal to five days:     ${H_0: \\mu = 5}$", align = "center")),
                       div(id = "helptext2", helpText("Alternative hypothesis: Patient recovery time is less than five days:     ${H_A:  \\mu < 5}$", align = "center")),
                       br(),
-                      h4("You can test these hypotheses (and find explanations of the hypotheses themselves) in the following tabs. You can also use the sidebar on the tabs to change the parameters and randomly simulate new data -- you can choose the type of test, the hypothesized value, and the level of significance to see how these affect the test and your conclusions."),
+                      h4("You can test these hypotheses (and find explanations of the hypotheses themselves) in the following tabs."),
+                      div(id = "strongtext", strong("You can also use the sidebar on the tabs to change the parameters and randomly simulate new data -- you can choose the type of test, the hypothesized value, and the level of significance to see how these affect the test and your conclusions.")),
                       br(),
                       h6("This app was developed by Abbey List as part of the Summer 2020 Duke Shiny Ed program.", align = "center")
                       
@@ -158,7 +159,9 @@ MathJax.Hub.Config({
              tabPanel("Null/Alternative Hypotheses",
                       
                       # Font size/color/alignment edits for mostly text outputs throughout the app (not just for this tab)
-                      tags$head(tags$style("#helptext1{
+                      tags$head(tags$style("#strongtext{
+                                           font-size: 17px;
+                                           }#helptext1{
                                           text-align: center
                                            } #helptext2{
                                            text-align: center

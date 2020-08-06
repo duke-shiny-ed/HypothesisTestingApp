@@ -5,8 +5,8 @@ account: grace-shiny
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2599649
-bundleId: 3478893
+bundleId: 3483309
 url: https://grace-shiny.shinyapps.io/HypothesisTesting/
-when: 1596647351.93098
+when: 1596734017.22289
 asMultiple: FALSE
 asStatic: FALSE
